@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "esModuleInterop": true,
+    "inlineSources": true,
+    "lib": ["ES2020", "DOM"],
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "dist",
+    "rootDirs": ["./src", "./scripts", "./test"],
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2017",
+    "jsx": "react-jsx"
+  },
+  "exclude": ["./src/**/*.test.ts"],
+  "include": ["./src/**/*.ts", "src/index.tsx"]
+}
