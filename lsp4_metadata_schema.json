@@ -52,6 +52,7 @@
       }
     },
     "asset": {
+      "title": "asset",
       "type": "object",
       "properties": {
         "hashFunction": {
@@ -64,7 +65,7 @@
           "$ref": "#/definitions/url"
         },
         "fileType": {
-          "$ref": "#/defintions/fileType"
+          "$ref": "#/definitions/fileType"
         }
       },
       "required": [
@@ -100,9 +101,11 @@
       "type": "string"
     },
     "link": {
+      "title": "link",
       "type": "object",
       "properties": {
         "title": {
+          "title": "title",
           "type": "string"
         },
         "url": {
@@ -111,6 +114,7 @@
       }
     },
     "image": {
+      "title":"image",
       "type": "object",
       "properties": {
         "width": {
