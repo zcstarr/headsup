@@ -1104,10 +1104,10 @@
     semver "^7.3.5"
     yargs "^17.0.1"
 
-"@metamask/eslint-config-jest@^6.0.0":
-  version "6.0.0"
-  resolved "https://registry.npmjs.org/@metamask/eslint-config-jest/-/eslint-config-jest-6.0.0.tgz"
-  integrity sha512-C0sXmyp5Hnp5IHVYXaW2TJAo/E9UiS192CwyUcw2qU1Ck7lj4z/wHdgROaH5F6rInqBO3afkDaqnArqvoxvO5Q==
+"@metamask/eslint-config-jest@^10.0.0":
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@metamask/eslint-config-jest/-/eslint-config-jest-10.0.0.tgz#8b4bdf1168cb1f283fd948609c49b0b5fe0916dd"
+  integrity sha512-wbD8F4a2vCVluDsJvWraRdkvHwoKQ1ugJmeBf3YvacQJoYs5eSVkDQvvcmLLj0Je9GvZ5AX3h7aJPiZ2tujxQA==
 
 "@metamask/eslint-config-nodejs@^6.0.0":
   version "6.0.0"
