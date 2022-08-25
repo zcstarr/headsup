@@ -5,6 +5,11 @@ import '@nomicfoundation/hardhat-toolbox';
 
 const config: HardhatUserConfig = {
   solidity: '0.8.9',
+  networks: {
+    lukso: {
+      url: 'https://rpc.l16.lukso.network',
+    },
+  },
   typechain: {
     outDir: 'src/typechain-types',
   },

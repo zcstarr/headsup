@@ -87,3 +87,4 @@ typechain-types
 #Hardhat files
 cache
 artifacts
+prod_env.sh
