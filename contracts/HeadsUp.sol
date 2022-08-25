@@ -7,11 +7,18 @@ import "hardhat/console.sol";
 import "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol";
 import "@lukso/lsp-smart-contracts/contracts/LSP0ERC725Account/LSP0ERC725Account.sol";
 import "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8IdentifiableDigitalAsset.sol";
+import "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8Constants.sol";
 import {LSP2Utils} from "@lukso/lsp-smart-contracts/contracts/LSP2ERC725YJSONSchema/LSP2Utils.sol";
-import "@erc725/smart-contracts/contracts/ERC725Y.sol";
+import {HeadsUpUtils} from "./HeadsUpUtils.sol";
+import {ERC725YCore} from "@erc725/smart-contracts/contracts/ERC725YCore.sol";
+import {IERC725Y} from "@erc725/smart-contracts/contracts/interfaces/IERC725Y.sol";
+import {GasLib} from "@erc725/smart-contracts/contracts/utils/GasLib.sol";
+import "./Constants.sol";
+bytes12 constant _FIX_LSP8_METADATA_JSON_KEY_PREFIX = 0x9a26b4060ae7f7d5e3cd0000;
 
 string constant ARRAY_PREFIX = string("[]");
-contract HeadsUp is LSP8IdentifiableDigitalAsset{
+contract HeadsUp is IERC725Y, LSP8IdentifiableDigitalAsset{
+ uint256 public tokenIdCounter;
  bytes32 public newsletterArrayKey;
   constructor(string memory name,
               string memory symbol,
@@ -20,11 +27,66 @@ contract HeadsUp is LSP8IdentifiableDigitalAsset{
               string memory arrayName = string(abi.encodePacked(name, ARRAY_PREFIX));
               uint256 count = 0;
               newsletterArrayKey = LSP2Utils.generateArrayKey(arrayName);
+
+              //Set the newsletter array key
               _setData(newsletterArrayKey, abi.encodePacked(count));
+
+              // uint256 tokenIds
+              _setData(_LSP8_TOKENID_TYPE_KEY,abi.encodePacked(uint256(2)));
+
+
+  }
+
+  function computeView() public {
+
+  }
+
+//  "https://storage.swapp.land/ipfs/QmYycsFrPBMxXh87QgRnWXx3auvTYZrpnPVaW8kjsFUhbe"
+  function generateJSON() public pure returns (string memory){
+    return '{"LSP4Metadata":{"description":"tokenz"}}';
   }
 
   function mintNewsletterNft(bool force) public {
+    
+    //left cut 20bytes 
+    
+    bytes32 tokendMetadataIdKey = LSP2Utils.generateMappingKey(_FIX_LSP8_METADATA_JSON_KEY_PREFIX, bytes20(abi.encodePacked(tokenIdCounter))); 
+    _mint(msg.sender,bytes32(tokenIdCounter),force,bytes("sent token"));
+    // bytes32 memory tokenMetadataKey = keccack(abi.encodePacked(_LSP8_METADATA_JSON_KEY_PREFIX,tokenIdCounter));
+    // _setData(tokenMetadataIdKey, jsonUrlHash);
+     // tokenIdCounter++;
     // _mint(msg.sender,);
+  }
+
+  /*function generateJSON(uint256 tokenId) {
+
+  }*/
+  function getData(bytes32[] memory dataKeys) public view virtual override(IERC725Y, ERC725YCore) returns (bytes[] memory dataValues)
+    {
+      dataValues = new bytes[](dataKeys.length);
+      string memory hashFunction = 'keccak256(utf8)';
+    for (uint256 i = 0; i < dataKeys.length; i = GasLib.uncheckedIncrement(i)) {
+        if(bytes12(_FIX_LSP8_METADATA_JSON_KEY_PREFIX) ==  bytes12(dataKeys[i])){
+            uint256 tokenId = HeadsUpUtils.extractTokenIdFromKey(dataKeys[i]);
+            dataValues[i]= LSP2Utils.generateJSONURLValue(hashFunction,generateJSON(),"ipfs://QmTsz9Xykc5JUAfUa6wWNrnKmTjdDMGFJRmFfQEeLQ9x8u");
+        }
+        else {
+              dataValues[i] = _getData(dataKeys[i]);
+        }
+      }
+
+        return dataValues;
+    }
+
+
+  function getData(bytes32 key) public override(ERC725YCore, IERC725Y) view returns (bytes memory){
+    uint count=99;
+    string memory hashFunction = 'keccak256(utf8)';
+    if(bytes12(_FIX_LSP8_METADATA_JSON_KEY_PREFIX) ==  bytes12(key)){
+      uint256 tokenId = HeadsUpUtils.extractTokenIdFromKey(key) ;
+      return LSP2Utils.generateJSONURLValue(hashFunction,generateJSON(),"ipfs://QmYXXjL4f1pLTErZFBfdnDqDhB6d8AbawBAh18LQPmtxxe");
+    }
+      return super._getData(key);
   }
 
   function setNewIssue (bytes calldata content) public onlyOwner {
