@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {fetch} from './lib';
 //import { ThemeProvider } from 'styled-components'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import App from './App';
