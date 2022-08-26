@@ -16,9 +16,8 @@ import ERC725js, { ERC725JSONSchema, ERC725 } from '@erc725/erc725.js';
 import UniversalProfileSchema from '@erc725/erc725.js/schemas/LSP3UniversalProfileMetadata.json';
 import { LSP4Metadata } from '../generated/lsp4_metadata_schema';
 import { L16_RPC_URL, IPFS_GATEWAY_BASE_URL } from './config';
-// import { validateLSP4MetaData } from './validateLSP4Metdata';
+import { fetchLSP4Metadata, validateLSP4MetaData } from './lsp4';
 
-import fetchLSP4Metadata from './lsp4';
 
 const LSP8TokenIdType = {
   name: 'LSP8TokenIdType',
@@ -67,7 +66,6 @@ export const fetchReceivedAssets = async (
   const ownedAssets = result.value as string[];
   return ownedAssets;
 };
-
 
 const fetchLSP8Assets = async (
   assetAddress: string,
@@ -149,8 +147,8 @@ const createLSP8Object = (
     collectionName,
     collectionSymbol,
     collectionAddress: assetAddress,
-    collectionDescription: collectionLSP4Metadata.LSP4Metadata.description,
-    collectionImage: collectionLSP4Metadata.LSP4Metadata.images[0][0]?.url
+    collectionDescription: collectionLSP4Metadata?.LSP4Metadata.description,
+    collectionImage: collectionLSP4Metadata?.LSP4Metadata.images[0][0]?.url
       ? collectionLSP4Metadata.LSP4Metadata.images[0][0]?.url
       : '',
     collectionIcon: collectionLSP4Metadata.LSP4Metadata.icons[0]?.url
@@ -175,7 +173,7 @@ const fetchLSP8Metadata = async (
         dynamicKeyParts: tokenIdPart,
       },
     ]);
-    return LSP8Metadata[0]; // validateLSP4MetaData(LSP8Metadata[0].value);
+    return validateLSP4MetaData(LSP8Metadata[0].value);
   };
 
   const options = {

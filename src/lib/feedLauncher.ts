@@ -1,26 +1,23 @@
-import Web3, {ContractOptions} from 'web3';
-import UniversalProfile from '@lukso/lsp-smart-contracts/artifacts/UniversalProfile.json';
+
+import BN from "bn.js";
 import HeadsUpFactoryABI from '../artifacts/HeadsUpFactory.json';
-import HeadsUpABI from '../artifacts/HeadsUp.json';
-import {
-  HeadsUp,
-  HeadsUpFactory__factory,
-  HeadsUpFactory,
-  HeadsUp__factory,
-} from '../typechain-types';
+import { HeadsUpFactory } from '../typechain-types/contracts';
 import * as config from './config';
+import { ListResults } from "./utils";
 
-const web3 = new Web3((window as any).ethereum);
 
-export function getFeedLauncherContract(options: ContractOptions) {
-  const signer = config.PROVIDER.getSigner();
-  return new web3.eth.Contract(
+export async function getFeeds(upAcct: string, offset: number, limit: number) {
+  const headsUp = new config.web3.eth.Contract(
     HeadsUpFactoryABI.abi as any,
     config.HEADUPS_FACTORY_ADDR,
-    {
-      gas: 5_000_000,
-      gasPrice: '1000000000',
-    },
+  ) as any as HeadsUpFactory;
+  const result = await headsUp.methods
+    .getNewsletters(upAcct, offset, limit)
+    .call();
+  const list = result[0] || [];
+  const count = new BN(result[1]);
+  console.log(list, count);
+  return [list, count] as ListResults<string>;
 }
 
 export async function launchNewNFTFeed(
@@ -28,7 +25,7 @@ export async function launchNewNFTFeed(
   feedSymbol: string,
   feedName: string,
 ): Promise<string> {
-  const contract = new web3.eth.Contract(
+  const contract = new config.web3.eth.Contract(
     HeadsUpFactoryABI.abi as any,
     config.HEADUPS_FACTORY_ADDR,
     {

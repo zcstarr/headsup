@@ -6,6 +6,7 @@ import { HEADUPS_FACTORY_ADDR } from './config';
 
 const web3 = new Web3((window as any).ethereum);
 const HEADUPS_TOKEN_ADDR = '0x6338b560a9B3FFE3411C0ecd2c55F2FebBD924ff';
+
 export async function login(): Promise<string[]> {
   const accountsRequest: string[] = await web3.eth.requestAccounts();
   console.log(accountsRequest);

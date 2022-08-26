@@ -26,6 +26,7 @@ module.exports = (_, argv) => {
     devServer: {
       contentBase: DIST,
       port: 9011,
+      historyApiFallback: { index: '/', disableDotRule: true },
       writeToDisk: true,
     },
     plugins: [
@@ -43,6 +44,10 @@ module.exports = (_, argv) => {
           test: /\.tsx?$/u,
           use: 'ts-loader',
           exclude: /node_modules/u,
+        },
+        {
+          test: /\.css$/u,
+          use: ['style-loader', 'css-loader'],
         },
       ],
     },

@@ -1,6 +1,7 @@
+import BN from 'bn.js';
 import { ethers } from 'ethers';
 
-export type ListResults<T> = [T[], ethers.BigNumber];
+export type ListResults<T> = [T[], BN];
 
 export function parseListResult<T>(result: ListResults<T>): T[] {
   const [values, size] = result;
