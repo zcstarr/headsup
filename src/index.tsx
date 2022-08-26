@@ -1,8 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {createRoot} from 'react-dom/client';
 //import { ThemeProvider } from 'styled-components'
 // eslint-disable-next-line import/no-extraneous-dependencies
+import './styles/index.css'
 import App from './App';
+import Store from './Store';
+import { ThemeProvider } from 'styled-components';
+import { lightTheme } from './theme';
 // import reportWebVitals from './reportWebVitals';
 // import { lightTheme } from './theme'
 // import { CssBaseline } from "./styles"
@@ -17,19 +21,19 @@ inspect({
 */
 
 
-ReactDOM.render(
-  //  <React.StrictMode>
-/*  <ThemeProvider theme={lightTheme}>
-    <CssBaseline />
-    <GlobalStyle />
-  </ThemeProvider>,
-  */
+let rootElement = document.getElementById('root');
+if (rootElement === null) throw new Error('Failed to find the root element');
+const root = createRoot(rootElement);
+root.render(
   <React.StrictMode>
-
-    <App />,
+  <ThemeProvider theme={lightTheme}>
+    <Store>
+      <App />
+    </Store>
+</ThemeProvider>
    </React.StrictMode>,
-    document.getElementById('root')
 );
+
 
 
 
