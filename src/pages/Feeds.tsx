@@ -1,23 +1,23 @@
 import * as config from "../lib/config";
 import React, { useContext, useEffect, useState } from "react";
 
-import { login, launchNewNFTFeed, mintToken } from "../lib/login";
+import { login,  mintToken } from "../lib/login";
 import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
-import { getFeeds } from "../lib/feedLauncher";
+import { getFeeds, launchNewNFTFeed } from "../lib/feedLauncher";
 import * as utils from "../lib/utils";
-import Button from "../components/button";
+import Button, { CommonRoundedButton } from "../components/button";
+import * as inputs from '../components/Input';
 import AppBar from "../components/AppBar";
 import { FileUploader } from "react-drag-drop-files";
-import { getUniqueKey } from "../lib/utils";
-
+import styled from "styled-components";
 const fileTypes = ["JPG", "PNG", "GIF"];
-
+import {apiClient} from "../lib/config";
 function DragDrop() {
   const [file, setFile] = useState<File | undefined>();
   useEffect(()=> {
     if(file){
-      
+     
     }
   })
   const handleChange = (file: File) => {
@@ -29,12 +29,24 @@ function DragDrop() {
   );
 }
 
-export default () => {
-  const [state , dispatch] = useContext(storage.globalContext);
-  const {activeFeedAddr, primaryAccount} = state;
-  const [feedAddr, setFeedAddr] = useState<string | undefined>(activeFeedAddr);
-  const [feeds, setFeeds] = useState<string[]>([]);
+const Container = styled.div`
+padding: 20px;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+align-items: center;
+`;
+const FeedItem = styled.li`
+padding: 20px;
+display: flex;
+flex-direction: column;
+align-items: left;
+`
 
+const FeedsList = () => {
+  const [feeds, setFeeds] = useState<string[]>([]);
+  const [state] = useContext(storage.globalContext);
+  const {primaryAccount} = state;
 
 
   const displayMetadata = async (feed: string) => {
@@ -44,11 +56,14 @@ export default () => {
         primaryAccount,
         config.web3.currentProvider
       );
-      alert(JSON.stringify(assets));
+      console.log(JSON.stringify(assets));
     }
   };
+
   const displayFeeds = () =>
-    feeds.map((f) => <li key={getUniqueKey("feed_")}>{f}</li>);
+    feeds.map((f) => <FeedItem key={utils.getUniqueKey("feed_")}>
+      <a href={`/feed/${f}`}>{f}</a>
+      </FeedItem>);
 
   useEffect(() => {
     async function checkFeeds() {
@@ -57,23 +72,22 @@ export default () => {
           await getFeeds(primaryAccount, 0, 100)
         ) as string[];
         setFeeds(feeds);
-        displayMetadata(feeds[0]);
-        setFeedAddr(feeds[0]);
+        displayMetadata(feeds[4]);
       }
     }
     checkFeeds();
   }, [primaryAccount]);
-
   return (
-    <div>
-      <div>
-        Your feeds
-        <ul>{displayFeeds()}</ul>
-      </div>
-      <div>
-        The real tester {primaryAccount} with feed {feedAddr}
-      </div>
-      <DragDrop/>
-    </div>
+    <Container>
+      <ul>
+        {displayFeeds()}
+      </ul>
+    </Container>
+  )
+}
+
+export default () => {
+  return (
+      <FeedsList/>
   );
 };

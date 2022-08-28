@@ -31,8 +31,8 @@ contract HeadsUpFactory is Ownable{
     
   }
 
-  function launchNewsletter(string calldata name, string calldata symbol) public {
-    HeadsUp hup = new HeadsUp(name, symbol, msg.sender);
+  function launchNftFeed(string calldata name, string calldata symbol, bytes calldata jsonUrlHash) public {
+    HeadsUp hup = new HeadsUp(name, symbol, jsonUrlHash, msg.sender);
     deployedContracts.push(address(hup));
     userAddressToNewsletters[address(msg.sender)].push(address(hup));
     emit Launch(msg.sender, address(hup));

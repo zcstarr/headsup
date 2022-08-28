@@ -12,3 +12,7 @@ export function parseListResult<T>(result: ListResults<T>): T[] {
   }
   return parsedList;
 }
+
+export function getUniqueKey(prefix: string): string {
+  return `${prefix}_${Math.random()}`;
+}

@@ -1,10 +1,10 @@
 import * as config from "../lib/config";
 import React, { useContext, useEffect, useState } from "react";
 
-import { login, launchNewNFTFeed, mintToken } from "../lib/login";
+import { login,  mintToken } from "../lib/login";
 import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
-import { getFeeds } from "../lib/feedLauncher";
+import { getFeeds, launchNewNFTFeed } from "../lib/feedLauncher";
 import * as utils from "../lib/utils";
 import Button, { CommonRoundedButton } from "../components/button";
 import * as inputs from '../components/Input';
@@ -17,7 +17,7 @@ function DragDrop() {
   const [file, setFile] = useState<File | undefined>();
   useEffect(()=> {
     if(file){
-      
+     
     }
   })
   const handleChange = (file: File) => {
@@ -48,19 +48,32 @@ const LaunchForm = () => {
   const [feedName, setFeedName] = useState<string | undefined>('');
   const [feedDesc, setFeedDesc] = useState<string | undefined>('');
   const [submission, setSubmission] = useState<boolean>(false);
+  const [state] = useContext(storage.globalContext);
+  const {primaryAccount} = state;
 
   useEffect(()=>{
     async function launchFeed(){
-    if(submission){
+    if(submission && primaryAccount){
+      alert('here')
       if(feedSymbol && feedName && feedDesc) {
       // TODO rename to metadata
-        const metadata = await apiClient.launchFeed(feedSymbol, feedName, feedDesc)
-        alert(metadata)
+      alert(feedSymbol + feedName + feedDesc)
+      try {
+        const metadata = await apiClient.createNftFeedMetadata(feedSymbol, feedName, feedDesc)
+        if(!metadata.jsonUrl) throw new Error('jsonurl metadata fail');
+        const address = await launchNewNFTFeed(primaryAccount, feedSymbol, feedName, metadata.jsonUrl);
+        console.log(address)
+        alert(address)
+      }catch(e){
+          console.error(e)
+      }finally {
+        setSubmission(false);
+      }
       }
     }
     }
     launchFeed()
-  },[submission])
+  },[submission, primaryAccount])
   return (
     <Container>
      <InputContainer>
@@ -74,10 +87,9 @@ const LaunchForm = () => {
     <InputContainer>
      <inputs.InputLabel>Enter NFT Feed Description:</inputs.InputLabel>
       <inputs.CommonInput onChange={(event)=>setFeedDesc(event.target.value)}/>
-     <inputs.CommonInput/>
     </InputContainer>
     <InputContainer>
-      <CommonRoundedButton onSubmit={()=>setSubmission(true)}>Launch Feed</CommonRoundedButton>
+      <CommonRoundedButton onClick={()=>setSubmission(true)}>Launch Feed {submission}</CommonRoundedButton>
     </InputContainer>
     </Container>
   )

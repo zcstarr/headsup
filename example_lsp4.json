@@ -1,0 +1,41 @@
+{
+  "LSP4Metadata": {
+      "description": "string",
+      "links": [ // links related to DigitalAsset
+          {
+              "title": "string", // a title for the link.
+              "url": "string" // the link itself
+          },
+          ...
+      ],
+      "icon": [  // multiple sizes of the same icon
+          {
+              "width": Number,
+              "height": Number,
+              "hashFunction": 'keccak256(bytes)',
+              "hash": 'string', // bytes32 hex string of the image hash
+              "url": 'string'
+          },
+          ...
+      ],
+      "images": [ // multiple images in different sizes, related to the DigitalAsset, image 0, should be the main image
+          [ // array of different sizes of the same image
+              {
+                  "width": Number,
+                  "height": Number,
+                  "hashFunction": 'keccak256(bytes)',
+                  "hash": 'string', // bytes32 hex string of the image hash
+                  "url": 'string'
+              },
+              ...
+          ],
+          [...]
+      ],
+      "assets": [{
+          "hashFunction": 'keccak256(bytes)',
+          "hash": 'string',
+          "url": 'string',
+          "fileType": 'string'
+      }]  
+  }
+}

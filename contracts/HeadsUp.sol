@@ -20,19 +20,29 @@ string constant ARRAY_PREFIX = string("[]");
 contract HeadsUp is IERC725Y, LSP8IdentifiableDigitalAsset{
  uint256 public tokenIdCounter;
  bytes32 public newsletterArrayKey;
+ // All tokens have the same metadata so we reshare this dynamically calculated md;
+ bytes public tokenMetadataJsonUrl; 
   constructor(string memory name,
               string memory symbol,
+              bytes memory jsonUrl,
               address newOwner_address) LSP8IdentifiableDigitalAsset(name, symbol, newOwner_address) {
               // NOTE cannot take back the name
               string memory arrayName = string(abi.encodePacked(name, ARRAY_PREFIX));
               uint256 count = 0;
               newsletterArrayKey = LSP2Utils.generateArrayKey(arrayName);
 
+              _setData(_LSP4_METADATA_KEY, jsonUrl);
               //Set the newsletter array key
               _setData(newsletterArrayKey, abi.encodePacked(count));
 
               // uint256 tokenIds
               _setData(_LSP8_TOKENID_TYPE_KEY,abi.encodePacked(uint256(2)));
+              // LSP2Utils.generateJSONURLValue(hashFunction,generateJSON(),"ipfs://QmTsz9Xykc5JUAfUa6wWNrnKmTjdDMGFJRmFfQEeLQ9x8u");
+              // _setData(_LSP4_METADATA_KEY,abi.)
+              string memory hashFunction = 'keccak256(utf8)';
+
+              // Precompute dummy data if it's never set
+              tokenMetadataJsonUrl = LSP2Utils.generateJSONURLValue(hashFunction,generateJSON(),"ipfs://QmTsz9Xykc5JUAfUa6wWNrnKmTjdDMGFJRmFfQEeLQ9x8u");
 
 
   }
@@ -46,12 +56,20 @@ contract HeadsUp is IERC725Y, LSP8IdentifiableDigitalAsset{
     return '{"LSP4Metadata":{"description":"tokenz"}}';
   }
 
-  function mintNewsletterNft(bool force) public {
+  function generateCollectionJSON() public pure returns(string memory){
+    return '{"LSP4Metadata":{"description":"token collection"}}';
+  }
+
+  function setCoverData(bytes memory jsonUrl) public onlyOwner{
+    tokenMetadataJsonUrl = jsonUrl;
+  }
+
+  function mintFeedNft(bool force) public {
     
     //left cut 20bytes 
     
-    bytes32 tokendMetadataIdKey = LSP2Utils.generateMappingKey(_FIX_LSP8_METADATA_JSON_KEY_PREFIX, bytes20(abi.encodePacked(tokenIdCounter))); 
-    _mint(msg.sender,bytes32(tokenIdCounter),force,bytes("sent token"));
+    // bytes32 tokendMetadataIdKey = LSP2Utils.generateMappingKey(_FIX_LSP8_METADATA_JSON_KEY_PREFIX, bytes20(abi.encodePacked(tokenIdCounter))); 
+    _mint(msg.sender,bytes32(tokenIdCounter),force,bytes("mint token"));
     // bytes32 memory tokenMetadataKey = keccack(abi.encodePacked(_LSP8_METADATA_JSON_KEY_PREFIX,tokenIdCounter));
     // _setData(tokenMetadataIdKey, jsonUrlHash);
      // tokenIdCounter++;
@@ -64,11 +82,12 @@ contract HeadsUp is IERC725Y, LSP8IdentifiableDigitalAsset{
   function getData(bytes32[] memory dataKeys) public view virtual override(IERC725Y, ERC725YCore) returns (bytes[] memory dataValues)
     {
       dataValues = new bytes[](dataKeys.length);
-      string memory hashFunction = 'keccak256(utf8)';
+      // string memory hashFunction = 'keccak256(utf8)';
     for (uint256 i = 0; i < dataKeys.length; i = GasLib.uncheckedIncrement(i)) {
         if(bytes12(_FIX_LSP8_METADATA_JSON_KEY_PREFIX) ==  bytes12(dataKeys[i])){
-            uint256 tokenId = HeadsUpUtils.extractTokenIdFromKey(dataKeys[i]);
-            dataValues[i]= LSP2Utils.generateJSONURLValue(hashFunction,generateJSON(),"ipfs://QmTsz9Xykc5JUAfUa6wWNrnKmTjdDMGFJRmFfQEeLQ9x8u");
+            // uint256 tokenId = HeadsUpUtils.extractTokenIdFromKey(dataKeys[i]);
+            // TODO just in case in the future we can do something more custom for each tokenId
+            dataValues[i]= tokenMetadataJsonUrl; 
         }
         else {
               dataValues[i] = _getData(dataKeys[i]);
@@ -80,11 +99,11 @@ contract HeadsUp is IERC725Y, LSP8IdentifiableDigitalAsset{
 
 
   function getData(bytes32 key) public override(ERC725YCore, IERC725Y) view returns (bytes memory){
-    uint count=99;
-    string memory hashFunction = 'keccak256(utf8)';
     if(bytes12(_FIX_LSP8_METADATA_JSON_KEY_PREFIX) ==  bytes12(key)){
-      uint256 tokenId = HeadsUpUtils.extractTokenIdFromKey(key) ;
-      return LSP2Utils.generateJSONURLValue(hashFunction,generateJSON(),"ipfs://QmYXXjL4f1pLTErZFBfdnDqDhB6d8AbawBAh18LQPmtxxe");
+      // string memory hashFunction = 'keccak256(utf8)';
+      // uint256 tokenId = HeadsUpUtils.extractTokenIdFromKey(key) ;
+      // return LSP2Utils.generateJSONURLValue(hashFunction,generateJSON(),"ipfs://QmYXXjL4f1pLTErZFBfdnDqDhB6d8AbawBAh18LQPmtxxe");
+      return tokenMetadataJsonUrl; 
     }
       return super._getData(key);
   }

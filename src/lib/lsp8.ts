@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /**
- * This logic is largely cribbed from 
+ * This logic is largely cribbed from
  * https://github.com/lukso-network/wallet.universalprofile.cloud/tree/1b8dc764f84c53a679b7a8b6f2d0ae698923c6f1/utils
  * MIT and Apache 2.0 logic, we want the LSP8s to be generally consummed by ecosystem so
  * it was taken to just use the same logic that other consumers are using in the wild
@@ -17,7 +17,6 @@ import UniversalProfileSchema from '@erc725/erc725.js/schemas/LSP3UniversalProfi
 import { LSP4Metadata } from '../generated/lsp4_metadata_schema';
 import { L16_RPC_URL, IPFS_GATEWAY_BASE_URL } from './config';
 import { fetchLSP4Metadata, validateLSP4MetaData } from './lsp4';
-
 
 const LSP8TokenIdType = {
   name: 'LSP8TokenIdType',
@@ -73,18 +72,26 @@ const fetchLSP8Assets = async (
   web3Provider: any,
 ): Promise<Lsp8AssetType[] | undefined> => {
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  console.log(assetAddress)
   const tokensIds = await fetchLSP8TokensIds(
     assetAddress,
     UPAddress,
     web3Provider,
   );
 
-  if (!tokensIds.length) {
+  // TODO undo
+  /* if (!tokensIds.length) {
     return undefined;
-  }
+  } */
 
   const [collectionName, collectionSymbol, collectionLSP4Metadata] =
     await fetchLSP4Metadata(assetAddress, web3Provider);
+  console.log(
+    'collection stuff',
+    collectionName,
+    collectionSymbol,
+    collectionLSP4Metadata,
+  );
 
   const newLSP8Assets: Lsp8AssetType[] = [];
 
@@ -138,7 +145,6 @@ const createLSP8Object = (
 ): Lsp8AssetType => {
   const { description, links, images, assets, icons } =
     NFTLSP4MetadataJSON.LSP4Metadata;
-
   const lsp8AssetObject = {
     tokenId,
     description,

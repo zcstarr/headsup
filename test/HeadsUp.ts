@@ -58,7 +58,7 @@ describe('HeadsUp', function () {
       // '0x0cfc51aec37c55a4d0b1a65c6255c4bf2fbdf6277f3cc0730c45b828b6db8b47'
       const key =
         '0x9a26b4060ae7f7d5e3cd00000000000000000000000000000000000000000000';
-      
+
       const result = await headsup['getData(bytes32)'](key);
 
       const hashFunction = result.slice(0, 10);
@@ -66,22 +66,22 @@ describe('HeadsUp', function () {
       const url = `0x${result.slice(74)}`;
 
       // check if it uses keccak256
-      /// if (hashFunction === '0x6f357c6a') {
-        // download the json file
+      // / if (hashFunction === '0x6f357c6a') {
+      // download the json file
 
-        console.log(web3.utils.hexToUtf8(url).replace('ipfs://', ''));
+      console.log(web3.utils.hexToUtf8(url).replace('ipfs://', ''));
 
-        /* const json = await ipfsMini.catJSON(
+      /* const json = await ipfsMini.catJSON(
         web3.utils.hexToUtf8(url).replace('ipfs://','')
     );*/
 
-        // compare hashes
-        /* if(web3.utils.keccak256(JSON.stringify(json)) === hash)
+      // compare hashes
+      /* if(web3.utils.keccak256(JSON.stringify(json)) === hash)
         return
             ? json
             : false
             */
-     // }
+      // }
       console.log(result);
       // expect(await lock.unlockTime()).to.equal(unlockTime);
     });

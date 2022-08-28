@@ -1,3 +1,4 @@
+export type Description = string;
 export type Title = string;
 export type Url = string;
 export interface Link {
@@ -18,8 +19,9 @@ export interface Image {
   url?: Url;
   [k: string]: any;
 }
-export type Icon = Image[];
-export type Images = Image[];
+export type Icons = Image[];
+export type ImageSet = Image[];
+export type Images = ImageSet[];
 export type FileType = string;
 export interface Asset {
   hashFunction: HashFunction;
@@ -35,8 +37,9 @@ export type Assets = Asset[];
  *
  */
 export interface LSP4Metadata {
+  description?: Description;
   links?: Links;
-  icon?: Icon;
+  icon?: Icons;
   images?: Images;
   assets?: Assets;
   [k: string]: any;

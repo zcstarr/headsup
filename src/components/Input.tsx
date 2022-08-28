@@ -24,6 +24,19 @@ border-style: none;
 padding: 10px;
 `
 
+export const CommonTextArea = styled.textarea.attrs({
+  focus: "none",
+})`
+background-color: ${({theme}: ThemeProp)=>theme.colors.gray};
+font-size: 1.3rem;
+width: 470px;
+height: 200px;
+border: 4px;
+border-radius: 4px;
+border-style: none;
+padding: 10px;
+`
+
 export const InputLabel= styled.span`
   font-size: 1.3rem;
   font-weight: 400;

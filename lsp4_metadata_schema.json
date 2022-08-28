@@ -9,11 +9,14 @@
       "title": "LSP4Metadata",
       "type": "object",
       "properties": {
+        "description": {
+          "$ref": "#/definitions/description"
+        },
         "links": {
           "$ref": "#/definitions/links"
         },
         "icon": {
-          "$ref": "#/definitions/icon"
+          "$ref": "#/definitions/icons"
         },
         "images": {
           "$ref": "#/definitions/images"
@@ -23,6 +26,10 @@
         }
       }
     },
+    "description": {
+      "type": "string",
+      "title": "description"
+    },
     "links": {
       "title": "links",
       "type": "array",
@@ -30,8 +37,8 @@
         "$ref": "#/definitions/link"
       }
     },
-    "icon": {
-      "title": "icon",
+    "icons": {
+      "title": "icons",
       "type": "array",
       "items": {
         "$ref": "#/definitions/image"
@@ -41,7 +48,7 @@
       "title": "images",
       "type": "array",
       "items": {
-        "$ref": "#/definitions/image"
+        "$ref": "#/definitions/imageSet"
       }
     },
     "assets": {
@@ -111,6 +118,13 @@
         "url": {
           "$ref": "#/definitions/url"
         }
+      }
+    },
+    "imageSet": {
+      "title": "imageSet",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/image"
       }
     },
     "image": {

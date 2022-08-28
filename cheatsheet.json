@@ -1,0 +1,60 @@
+{
+  "$id": "carti_package_schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "A package description for Cartesi Machines",
+  "type": "object",
+  "$ref": "#/definitions/package",
+  "definitions": {
+    "package" : {
+      "type" : "object",
+      "properties" : {
+          "machineHash": {
+              "$ref": "#/definitions/machineHash"
+          },
+          "version": {
+              "$ref": "#/definitions/version"
+          },
+          "name": {
+              "$ref": "#/defintions/name"
+          },
+          "description": {
+              "$ref": "#/definitions/description"
+          },
+          "assets": {
+              "$ref": "#/definitions/assets"
+          }
+      }
+    },
+    "machineHash": {
+        "type":"string"
+    },
+    "name": {
+        "type":"string"
+    },
+    "version": {
+        "type": "string",
+        "pattern": "^v\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$"
+    },
+    "description": {
+        "type": "string"
+    },
+    "assets": {
+        "type": "array",
+        "items": {
+            "$ref":"#/definitions/asset"
+        }
+    },
+    "asset": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "cid" : {
+                "type": "string"
+            }
+        },
+        "required": ["name", "cid"]
+    }
+  }
+}
