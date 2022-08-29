@@ -10,7 +10,7 @@ aliases:
   - &save-deps-cache
     key: deps-cache-{{ checksum "package-lock.json" }}
     paths:
-      - ~/swappland-frontend/node_modules
+      - ~/headsup/node_modules
 
   # -------------------------
   #  ALIASES: Branch Filters
@@ -23,7 +23,7 @@ aliases:
       only:  /^(pull|dependabot|fix|feat)\/.*$/
 
 defaults: &defaults
-  working_directory: ~/swappland-frontend
+  working_directory: ~/headsup
 
 jobs:
   test:
@@ -90,7 +90,7 @@ jobs:
           name: "build for production"
           environment: 
             REACT_APP_HEADSUP_ENV: "production" 
-          command: REACT_APP_HEADSUP_FRONTEND_URI=$STAGING_HEADSUP_URI REACT_APP_HEADSUP_MAIN_CONTRACT_ID=$HEADS_UP_MAIN_CONTRACT_ID npm run build
+          command: REACT_APP_HEADSUP_ENV=$HEADSUP_ENV REACT_APP_HEADSUP_FRONTEND_URI=$PRODUCTION_HEADSUP_URI REACT_APP_HEADSUP_MAIN_CONTRACT_ID=$HEADS_UP_MAIN_CONTRACT_ID npm run build
       - run:
           name: Install awscli
           command: sudo pip install awscli
