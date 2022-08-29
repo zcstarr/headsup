@@ -19,7 +19,7 @@ export const L16_CHAIN_ID = 2828;
 export const HEADUPS_FACTORY_ADDR =
   process.env.REACT_APP_HEADSUP_MAIN_CONTRACT_ID ||
   '0xde8BaE72564ea5313756AAD83bA64567Bd0787F7';
-export const API_BASE_URL = process.env.REACT_APP_HEADS_UP_ENV  ?  'https://api.feedhead.xyz' : 
+export const API_BASE_URL = process.env.REACT_APP_HEADSUP_ENV  ?  'https://api.feedhead.xyz' : 
 `http://${SERVER_HOST}:${SERVER_PORT}`
 
 export const COVER_META_ROUTE = `http://${API_BASE_URL}/covermeta`;
