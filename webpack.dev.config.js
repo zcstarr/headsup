@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const DIST = path.resolve(__dirname, 'public');
 
@@ -16,7 +17,7 @@ module.exports = (_, argv) => {
   console.log(isProd);
   const config = {
     devtool: 'inline-source-map',
-    mode: 'development',
+    mode: argv.mode,
     entry: './src/index.tsx',
     output: {
       filename: 'bundle.js',
