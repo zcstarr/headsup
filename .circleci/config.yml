@@ -97,7 +97,7 @@ jobs:
       - run:
           name: Deploy to S3
           command: | 
-            aws s3 sync dist/public s3://$PRODUCTION_FRONTEND_S3_BUCKET --delete
+            aws s3 sync public s3://$PRODUCTION_FRONTEND_S3_BUCKET --delete
             aws cloudfront create-invalidation --distribution-id $PRODUCTION_CF_DISTRUBITION_ID --paths /index.html
       - save_cache: *save-deps-cache
 
