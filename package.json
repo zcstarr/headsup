@@ -37,7 +37,7 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' '**/*.yml' --single-quote --ignore-path .gitignore",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
-    "build": "webpack --mode production",
+    "build": "hardhat compile && webpack --mode production",
     "postinstall": "yarn generate-types",
     "typecheck": "tsc --noEmit"
   },

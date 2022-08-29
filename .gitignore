@@ -88,3 +88,4 @@ typechain-types
 cache
 artifacts
 prod_env.sh
+!src/artifacts
