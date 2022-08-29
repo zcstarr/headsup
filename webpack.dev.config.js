@@ -17,7 +17,7 @@ module.exports = (_, argv) => {
   console.log(isProd);
   const config = {
     devtool: 'inline-source-map',
-    mode: argv.mode,
+    mode: 'development',
     entry: './src/index.tsx',
     output: {
       filename: 'bundle.js',
@@ -49,6 +49,10 @@ module.exports = (_, argv) => {
         {
           test: /\.css$/u,
           use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.(png|svg|jpg|jpeg|gif)$/u,
+          type: 'asset/resource',
         },
       ],
     },

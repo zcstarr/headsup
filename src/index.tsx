@@ -9,8 +9,8 @@ import { ThemeProvider } from 'styled-components';
 import { lightTheme } from './theme';
 // import reportWebVitals from './reportWebVitals';
 // import { lightTheme } from './theme'
-// import { CssBaseline } from "./styles"
-// import GlobalStyle from './styles/global';
+ import { CssBaseline } from "./styles"
+ import GlobalStyle from './styles/global';
 
 /*
 TODO rm and toggle on config for developmen
@@ -27,6 +27,8 @@ const root = createRoot(rootElement);
 root.render(
   <React.StrictMode>
   <ThemeProvider theme={lightTheme}>
+    <CssBaseline />
+    <GlobalStyle />
     <Store>
       <App />
     </Store>

@@ -164,7 +164,7 @@ const createLSP8Object = (
   return lsp8AssetObject as Lsp8AssetType;
 };
 
-const fetchLSP8Metadata = async (
+export const fetchLSP8Metadata = async (
   tokenId: string,
   address: string,
   provider: any,

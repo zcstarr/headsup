@@ -21,8 +21,8 @@ const CardContainer = styled.div`
 
 const CardDataContainer = styled.div`
  padding: 10px;
- width: 300px;
- height: 375px;
+ width: 475px;
+ height: 500px;
 
 `
 
