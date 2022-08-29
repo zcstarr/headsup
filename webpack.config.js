@@ -52,7 +52,7 @@ module.exports = (_, argv) => {
       ],
     },
     resolve: {
-      extensions: ['.tsx', '.ts', '.js'],
+      extensions: ['.tsx', '.ts', '.js', '.json'],
       fallback: {
         // eslint-disable-next-line node/no-extraneous-require
         buffer: require.resolve('buffer-browserify'),
