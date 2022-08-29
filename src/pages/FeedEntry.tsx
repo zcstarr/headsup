@@ -16,10 +16,14 @@ const fileTypes = ["JPG", "PNG", "GIF"];
 import {apiClient} from "../lib/config";
 import { useParams, useNavigate } from "react-router-dom";
 import { HeadsUpDatum } from "../generated/headsup_datum_schema";
-import {unified} from 'unified'
 import rehypeParse from 'rehype-parse'
 import rehypeSanitize from 'rehype-sanitize'
 import rehypeStringify from 'rehype-stringify'
+import {unified} from 'unified'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import rehypeDocument from 'rehype-document'
+import rehypeFormat from 'rehype-format'
 
 import BN from "bn.js";
 function DragDrop() {
@@ -83,14 +87,16 @@ align-self:flex-start;
 margin-bottom: 10px;
 `
 
-async function cleanUp(content: string): Promise<string>{
+// TODO fix view layer sanitizer that breaks html 
+async function cleanUp(content: string): Promise<any>{
   const result = await unified()
-    .use(rehypeParse, {fragment: true})
+    .use(remarkParse)
+    .use(remarkRehype)
     .use(rehypeSanitize)
     .use(rehypeStringify)
-    .process(Buffer.from(content));
-    return String(result)
-    
+    .process(content);
+    console.log(result)
+    return String(result) 
 }
 
 const FeedEntry = () => {

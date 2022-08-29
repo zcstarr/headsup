@@ -15,10 +15,19 @@ const fileTypes = ["JPG", "PNG", "GIF", "SVG"];
 import { apiClient } from "../lib/config";
 import { useParams } from "react-router-dom";
 import { HeadsUpDatum } from "../generated/headsup_datum_schema";
+import MDEditor from '@uiw/react-md-editor';
+import rehypeSanitize from "rehype-sanitize";
+import {unified} from 'unified'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import rehypeDocument from 'rehype-document'
+import rehypeFormat from 'rehype-format'
 
 interface FeedParam {
   feedAddr?: string;
 }
+
+
 
 function DragDrop() {
   const [file, setFile] = useState<File | undefined>();
@@ -128,9 +137,14 @@ const FeedCoverForm = () => {
       </InputContainer>
       <InputContainer>
         <inputs.InputLabel>Entry Content:</inputs.InputLabel>
-        <inputs.CommonTextArea
-          onChange={(event) => setEntryContent(event.target.value)}
-        />
+      <MDEditor
+        value={entryContent}
+        preview="edit"
+        onChange={setEntryContent}
+        previewOptions={{
+          rehypePlugins: [[rehypeSanitize]],
+        }}
+      />
       </InputContainer>
 
       <InputContainer>
@@ -150,6 +164,8 @@ const FeedCoverForm = () => {
     </Container>
   );
 };
+
+
 
 export default () => {
   return <FeedCoverForm />;

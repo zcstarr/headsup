@@ -53,6 +53,7 @@ export async function getOwner(feedAddr: string) {
 
   return headsUp.methods.owner().call();
 }
+
 export async function setNewIssue(
   acct: string,
   feedAddr: string,

@@ -1,0 +1,132 @@
+version: 2
+
+aliases:
+  # -------------------------
+  #      ALIASES: Caches
+  # -------------------------
+  - &restore-deps-cache
+    key: deps-cache-{{ checksum "package-lock.json" }}
+
+  - &save-deps-cache
+    key: deps-cache-{{ checksum "package-lock.json" }}
+    paths:
+      - ~/swappland-frontend/node_modules
+
+  # -------------------------
+  #  ALIASES: Branch Filters
+  # -------------------------
+  - &filter-only-master
+    branches:
+      only: main
+  - &filter-only-semantic-pr
+    branches:
+      only:  /^(pull|dependabot|fix|feat)\/.*$/
+
+defaults: &defaults
+  working_directory: ~/swappland-frontend
+
+jobs:
+  test:
+    <<: *defaults
+    docker:
+      - image: circleci/node:16
+    steps:
+      - checkout
+      - restore_cache: *restore-deps-cache
+      - run: npm install
+      - run: npm install codecov
+      - save_cache: *save-deps-cache
+
+  build:
+    <<: *defaults
+    docker:
+      - image: circleci/node:16
+    steps:
+      - checkout
+      - restore_cache: *restore-deps-cache
+      - run: npm install
+      - run: npm run build
+      - save_cache: *save-deps-cache
+
+  staging:
+    <<: *defaults
+    docker:
+      - image: circleci/node:16
+    steps:
+      - checkout
+      - restore_cache: *restore-deps-cache
+      - run: npm install
+      - run: npm run build
+      - save_cache: *save-deps-cache
+
+  release:
+    <<: *defaults
+    docker:
+      - image: circleci/node:16
+    steps:
+      - checkout
+      - restore_cache: *restore-deps-cache
+      - run: npm install
+      - run: npm run build
+      - run: npm install semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github @semantic-release/npm @semantic-release/commit-analyzer @semantic-release/release-notes-generator @qiwi/semantic-release-gh-pages-plugin
+      - run: git checkout .
+      - run: ./node_modules/.bin/semantic-release --branches main
+      - save_cache: *save-deps-cache
+
+  release_production:
+    <<: *defaults
+    docker:
+      - image: circleci/python:3.7.9-buster
+    steps:
+      - checkout
+      - restore_cache: *restore-deps-cache
+      - run:
+          name: "Update Node.js and npm"
+          command: |
+            curl -sSL "https://nodejs.org/dist/v16.13.0/node-v16.13.0-linux-x64.tar.xz" | sudo tar --strip-components=2 -xJ -C /usr/local/bin/ node-v15.10.0-linux-x64/bin/node
+            curl https://www.npmjs.com/install.sh | sudo bash
+      - run: npm install
+      - run: 
+          name: "build for production"
+          environment: 
+            REACT_APP_HEADSUP_ENV: "production" 
+          command: REACT_APP_HEADSUP_FRONTEND_URI=$STAGING_HEADSUP_URI REACT_APP_HEADSUP_MAIN_CONTRACT_ID=$HEADS_UP_MAIN_CONTRACT_ID npm run build
+      - run:
+          name: Install awscli
+          command: sudo pip install awscli
+      - run:
+          name: Deploy to S3
+          command: | 
+            aws s3 sync build/ s3://$PRODUCTION_FRONTEND_S3_BUCKET --delete
+            aws cloudfront create-invalidation --distribution-id $PRODUCTION_CF_DISTRUBITION_ID --paths /index.html
+      - save_cache: *save-deps-cache
+
+workflows:
+  version: 2
+  analysis:
+    jobs:
+      - test:
+          filters: *filter-only-semantic-pr
+      - build:
+          filters: *filter-only-semantic-pr
+
+  release:
+    jobs:
+      - test:
+          filters: *filter-only-master
+      - build:
+          filters: *filter-only-master
+      - hold:
+          filters: *filter-only-master
+          type: approval
+          requires:
+            - test
+            - build
+      - release:
+          filters: *filter-only-master
+          requires:
+            - hold
+      - release_production:
+          filters: *filter-only-master
+          requires:
+            - hold
