@@ -14,14 +14,13 @@ import { HeadsUpDatum } from '../generated/headsup_datum_schema';
 import { LSP4Metadata } from '../generated/lsp4_metadata_schema';
 import { LSP8IdentifiableDigitalAsset } from '../typechain-types/@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset';
 import * as config from './config';
-import { ListResults } from './utils';
+import { parseListResult, ListResults } from './utils';
 import { fetchLSP8Metadata } from './lsp8';
-
 
 export async function getAllFeeds(
   offset: number,
   limit: number,
-  descending: boolean
+  descending: boolean,
 ) {
   const headsUp = new config.web3.eth.Contract(
     HeadsUpFactoryABI.abi as any,
@@ -33,8 +32,35 @@ export async function getAllFeeds(
   const list = result[0] || [];
   const count = new BN(result[1]);
   return [list, count] as ListResults<string>;
-
 }
+
+// TODO Note will need proper pagination
+export async function getFeedsByTokenHolder(
+  upAcct: string,
+  importedFeedAddrs?: string[],
+): Promise<string[]> {
+  const feedAddrs =
+    importedFeedAddrs || parseListResult(await getAllFeeds(0, 100, false));
+  const settled = await Promise.allSettled(
+    feedAddrs.map((feedAddr: string | undefined) => {
+      const headsUp = new config.web3.eth.Contract(
+        HeadsUpABI.abi as any,
+        feedAddr,
+      ) as any as HeadsUp;
+      return headsUp.methods.tokenIdsOf(upAcct).call();
+    }),
+  );
+  const ownedFeeds: string[] = [];
+  settled.forEach((sf, idx) => {
+    if (sf.status === 'fulfilled') {
+      if (sf.value.length > 0) {
+        ownedFeeds.push(feedAddrs[idx]);
+      }
+    }
+  });
+  return ownedFeeds;
+}
+
 export async function getPersonalFeeds(
   upAcct: string,
   offset: number,
@@ -187,6 +213,25 @@ export async function getOwner(feedAddr: string) {
   ) as any as HeadsUp;
 
   return headsUp.methods.owner().call();
+}
+export interface FeedCache {
+  [x: string]: string;
+}
+
+export async function getOwnedFeeds(
+  upAddr: string,
+  feedAddrs: string[],
+): Promise<string[]> {
+  const filteredSet: string[] = [];
+  const result = await Promise.allSettled(
+    feedAddrs.map((feedAddr) => getOwner(feedAddr)),
+  );
+  result.forEach((fs, idx) => {
+    if (fs.status === 'fulfilled' && fs.value === upAddr) {
+      filteredSet.push(feedAddrs[idx]);
+    }
+  });
+  return filteredSet;
 }
 
 export async function setNewIssue(

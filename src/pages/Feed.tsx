@@ -102,6 +102,7 @@ const FeedControls = (props: {owner: boolean}) => {
     {owner && <>
     <EditControl onClick={()=>nav(`/feeds/${feedAddr}/new-entry`)}>New Entry</EditControl>
     <EditControl onClick={()=>nav(`/feeds/${feedAddr}/cover`)}>Edit Details</EditControl>
+    <EditControl onClick={()=>window.location.href=`${config.API_BASE_URL}/feeds/${feedAddr}/rss`}>rss</EditControl>
     </> }
     </EditControls>
 </ControlContainer>
