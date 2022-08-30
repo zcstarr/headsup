@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const {EnvironmentPlugin} = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const DIST = path.resolve(__dirname, 'public');
@@ -38,6 +39,21 @@ module.exports = (_, argv) => {
       new NodePolyfillPlugin({
         excludeAliases: ['stream', 'buffer'],
       }),
+      new EnvironmentPlugin({
+
+          NODE_ENV: 'development',
+          REACT_APP_HEADSUP_FRONTEND_URI:'',
+          REACT_APP_HEADSUP_ENV:'',
+          REACT_APP_HEADSUP_MAIN_CONTRACT_ID:'',
+          REACT_APP_HEADSUP_IPFS_GATEWAY:''
+      })
+     /* new EnvironmentPlugin([
+        'NODE_ENV', 
+        'REACT_APP_HEADSUP_FRONTEND_URI',
+        'REACT_APP_HEADSUP_ENV',
+        'REACT_APP_HEADSUP_MAIN_CONTRACT_ID',
+        'REACT_APP_HEADSUP_IPFS_GATEWAY'
+    ])*/
     ],
     module: {
       rules: [
