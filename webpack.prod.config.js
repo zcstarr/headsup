@@ -11,7 +11,6 @@ const appDirectory = fs.realpathSync(process.cwd(), 'utf8');
 const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 // eslint-disable-next-line import/no-dynamic-require
 const prefix = require(resolveApp('package.json')).homepage;
-
 module.exports = (_, argv) => {
   const config = {
     mode: 'production',
@@ -20,7 +19,7 @@ module.exports = (_, argv) => {
     output: {
       filename: 'bundle.js',
       path: DIST,
-      publicPath: DIST,
+      publicPath: '/',
     },
     plugins: [
       new HtmlWebpackPlugin({
