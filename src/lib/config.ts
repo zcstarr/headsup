@@ -39,7 +39,7 @@ export const apiClient = process.env.REACT_APP_HEADSUP_ENV
   ? new HeadsUpServerClient({
       transport: {
         host: RPC_API_HOST,
-        port: parseInt(`${SERVER_PORT}`, 10),
+        port: 443,
         type: 'https',
         path: '/rpc',
       },
