@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { login, mintToken } from "../lib/login";
 import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
-import { getPersonalFeeds, launchNewNFTFeed, setCover } from "../lib/feedLauncher";
+import { getPersonalFeeds, launchNewNFTFeed, setCover, setTokenMetadata } from "../lib/feedLauncher";
 import * as utils from "../lib/utils";
 import Button, { CommonRoundedButton } from "../components/button";
 import * as inputs from "../components/Input";
@@ -103,7 +103,7 @@ const FeedCoverForm = () => {
             jsonUrl: string;
             cid: string;
           };
-          await setCover(primaryAccount, feedAddr, value.jsonUrl);
+          await setTokenMetadata(primaryAccount, feedAddr, value.jsonUrl);
 
         } catch (e) {
           console.error(e);
@@ -132,7 +132,7 @@ const FeedCoverForm = () => {
       </InputContainer>
       <InputContainer>
         <CommonRoundedButton onClick={() => setSubmission(true)}>
-          Submit Cover {submission}
+          Submit {submission}
         </CommonRoundedButton>
       </InputContainer>
     </Container>

@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { login,  mintToken } from "../lib/login";
 import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
-import { getPersonalFeeds, getIssue, getNumberOfIssue, getOwner, getTokenName, launchNewNFTFeed } from "../lib/feedLauncher";
+import { getPersonalFeeds, getIssue, getNumberOfIssue, getOwner, getTokenName, launchNewNFTFeed, mintFeed } from "../lib/feedLauncher";
 import {CardsGrid, CardGridContainer, CardProps, Card} from "../components/Card";
 import * as utils from "../lib/utils";
 import Button, { CommonRoundedButton } from "../components/button";
@@ -65,7 +65,8 @@ const ControlMintContainer = styled.div`
 `
 
 const MintControl = styled.div`
-
+  padding: 20px;
+  cursor: pointer;
 `
 const Blank = styled.div`
   grid-area: blank;
@@ -91,18 +92,29 @@ const EditControl = styled.div`
 const FeedControls = (props: {owner: boolean}) => {
   const {owner} = props;
   const nav = useNavigate();
+  const [state] = useContext(storage.globalContext);
+  const {primaryAccount} = state;
+  const [isMinting, setMinting] = useState<boolean>(false);
   const {feedAddr} = useParams();
+  useEffect(()=>{
+    async function mint(){
+      if(isMinting && primaryAccount && feedAddr){
+        await mintFeed(primaryAccount, feedAddr)
+      }
+    }
+    mint()
+  }, [primaryAccount, isMinting])
   return (
   <ControlContainer>
     <ControlMintContainer>
-      <MintControl>Mint</MintControl>
+      <MintControl onClick={()=>setMinting(true)}>Mint</MintControl>
     </ControlMintContainer>
     <Blank></Blank>
     <EditControls>
     {owner && <>
     <EditControl onClick={()=>nav(`/feeds/${feedAddr}/new-entry`)}>New Entry</EditControl>
     <EditControl onClick={()=>nav(`/feeds/${feedAddr}/cover`)}>Edit Details</EditControl>
-    <EditControl onClick={()=>window.location.href=`${config.API_BASE_URL}/feeds/${feedAddr}/rss`}>rss</EditControl>
+    <EditControl onClick={()=>window.location.href=`${config.API_BASE_URL}/feed/${feedAddr}/rss`}>rss</EditControl>
     </> }
     </EditControls>
 </ControlContainer>

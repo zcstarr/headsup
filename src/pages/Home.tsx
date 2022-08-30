@@ -15,6 +15,8 @@ import { ThemeProp } from "../components/types";
 import BannerImg from '../images/banner.png'
 import { features } from "process";
 import { CardProps, CardsGrid } from "../components/Card";
+import { Spacer } from "../components";
+import Heading from "../components/Heading";
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
@@ -170,17 +172,10 @@ export default () => {
     </ul>
     </BannerStop>
     <Container>
-      <div> Featured Feeds</div>
+      <Heading> Featured Feeds</Heading>
       <CardsGrid cards={featuredCards}/>
-      <div>
-        <ul>{displayFeeds()}</ul>
-      </div>
-      <div> Create Your Own</div>
-      <div>
-        The real tester {primaryAccount} with feed {feedAddr}
-      </div>
-      <DragDrop/>
     </Container>
+    <Spacer/>
     </>
   );
 };

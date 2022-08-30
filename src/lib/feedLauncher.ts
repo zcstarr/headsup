@@ -17,6 +17,13 @@ import * as config from './config';
 import { parseListResult, ListResults } from './utils';
 import { fetchLSP8Metadata } from './lsp8';
 
+export async function getRandomFeed(): Promise<string> {
+  const feeds = await getAllFeeds(0, 100, false);
+  const filtered = parseListResult(feeds);
+  const feedsCount = filtered.length;
+  return filtered[Math.floor(Math.random() * feedsCount)];
+}
+
 export async function getAllFeeds(
   offset: number,
   limit: number,

@@ -14,6 +14,9 @@ import styled from "styled-components";
 const fileTypes = ["JPG", "PNG", "GIF"];
 import {apiClient} from "../lib/config";
 import { CardProps, CardsGrid } from "../components/Card";
+import { Heading } from "../components/Heading";
+import {Spacer} from '../components';
+
 function DragDrop() {
   const [file, setFile] = useState<File | undefined>();
   useEffect(()=> {
@@ -153,17 +156,10 @@ export default () => {
   return (
     <>
     <Container>
-      <div>Latest Feeds</div>
+      <Heading>Latest Feeds</Heading>
       <CardsGrid cards={featuredCards}/>
-      <div>
-        <ul>{displayFeeds()}</ul>
-      </div>
-      <div> Create Your Own</div>
-      <div>
-        The real tester {primaryAccount} with feed {feedAddr}
-      </div>
-      <DragDrop/>
     </Container>
+    <Spacer/>
     </>
   );
 };

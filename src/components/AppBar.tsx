@@ -8,6 +8,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Icon from "../images/temp-logo.png";
 import { ThemeProp } from "./types";
 import { useNavigate } from "react-router-dom";
+import { getRandomFeed } from "../lib/feedLauncher";
 
 const Container = styled.div`
   display: flex;
@@ -63,6 +64,7 @@ const AnnouncementBarContent = styled.div`
   padding: 1rem 2rem;
   margin: 0;
   letter-spacing: .1rem;
+  cursor: pointer;
 }
 `;
 const MenuLink = styled.div`
@@ -73,6 +75,7 @@ const AppBar = () => {
   const [state, dispatch] = useContext(storage.globalContext);
   const { primaryAccount } = state;
   const [loggedIn, setLoggedIn] = useState<boolean>(!primaryAccount !== true);
+  const [calcRandom, setCalcRandom] =useState<boolean>(false)
   const nav = useNavigate();
   async function onClickLogin() {
     const account = await login();
@@ -90,11 +93,21 @@ const AppBar = () => {
       type: storage.ActionType.LOGOUT,
     });
   }
+  useEffect(()=>{
+    async function cr(){
+    if(calcRandom){
+      const newFeed = await getRandomFeed();
+      setCalcRandom(false)
+      nav(`/feed/${newFeed}`);
+    }
+  }
+  cr()
+  },[calcRandom])
   // <Button onClick={loggedIn ? async ()=>onClickLogout() : async ()=>onClickLogin()}>{loggedIn ? "Logout": "Login"} </Button>
   return (
     <Container>
       <AnnouncementBar>
-        <AnnouncementBarContent>
+        <AnnouncementBarContent onClick={()=>nav('/launch')}>
           CREATE YOUR OWN 🤯 NFT FEED DROP
         </AnnouncementBarContent>
       </AnnouncementBar>
@@ -104,7 +117,7 @@ const AppBar = () => {
           <MenuContainer> 
             <ul>
               <li onClick={()=>nav('/launch')}>Feed Launch</li>  
-              <li onClick={()=>alert('coming soon')}>Feed Random</li>  
+              <li onClick={()=>setCalcRandom(true)}>Feed Random</li>  
               <li onClick={()=>nav('/profile')}>Feed Me</li>  
               <li onClick={()=>nav('/feeds')}>Feed Them</li>  
             </ul> 
