@@ -105,20 +105,32 @@ const FeedControls = (props: {owner: boolean}) => {
     mint()
   }, [primaryAccount, isMinting])
   return (
-  <ControlContainer>
-    <ControlMintContainer>
-      <MintControl onClick={()=>setMinting(true)}>Mint</MintControl>
-    </ControlMintContainer>
-    <Blank></Blank>
-    <EditControls>
-    {owner && <>
-    <EditControl onClick={()=>nav(`/feeds/${feedAddr}/new-entry`)}>New Entry</EditControl>
-    <EditControl onClick={()=>nav(`/feeds/${feedAddr}/cover`)}>Edit Details</EditControl>
-    <EditControl onClick={()=>window.location.href=`${config.API_BASE_URL}/feed/${feedAddr}/rss`}>rss</EditControl>
-    </> }
-    </EditControls>
-</ControlContainer>
-  )
+    <ControlContainer>
+      <ControlMintContainer>
+        <MintControl onClick={() => setMinting(true)}>Mint</MintControl>
+      </ControlMintContainer>
+      <Blank></Blank>
+      <EditControls>
+        {owner && (
+          <>
+            <EditControl onClick={() => nav(`/feeds/${feedAddr}/new-entry`)}>
+              New Entry
+            </EditControl>
+            <EditControl onClick={() => nav(`/feeds/${feedAddr}/cover`)}>
+              Edit Details
+            </EditControl>
+            <EditControl
+              onClick={() =>
+                (window.location.href = `${config.API_BASE_URL}/feed/${feedAddr}/rss`)
+              }
+            >
+              rss
+            </EditControl>
+          </>
+        )}
+      </EditControls>
+    </ControlContainer>
+  );
 }
 
 
