@@ -4,7 +4,7 @@ const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
-const DIST = path.resolve(__dirname, 'public/assets');
+const DIST = path.resolve(__dirname, 'public');
 
 // eslint-disable-next-line node/no-sync
 const appDirectory = fs.realpathSync(process.cwd(), 'utf8');
@@ -19,11 +19,11 @@ module.exports = (_, argv) => {
     output: {
       filename: 'bundle.js',
       path: DIST,
-      publicPath: '/assets',
+      publicPath: '/',
     },
     plugins: [
       new HtmlWebpackPlugin({
-        publicPath: '/',
+        publicPath: prefix,
         template: 'template/index.html',
       }),
       new NodePolyfillPlugin({
