@@ -220,7 +220,7 @@ const Feed = () => {
       }
     }
     getFeedEntries();
-  }, [primaryAccount]);
+  }, [primaryAccount, feedAddr]);
   useEffect(()=> {
     async function checkOwner(){
     if(feedAddr && primaryAccount){
