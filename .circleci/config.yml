@@ -98,7 +98,7 @@ jobs:
           name: Deploy to S3
           command: | 
             aws s3 sync public s3://$PRODUCTION_FRONTEND_S3_BUCKET --delete
-            aws cloudfront create-invalidation --distribution-id $PRODUCTION_CF_DISTRUBITION_ID --paths /index.html
+            aws cloudfront create-invalidation --distribution-id $PRODUCTION_CF_DISTRUBITION_ID --paths /index.html , /bundle.js, /bundle.js.map
       - save_cache: *save-deps-cache
 
 workflows:
