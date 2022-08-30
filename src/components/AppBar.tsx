@@ -106,6 +106,7 @@ const AppBar = () => {
               <li onClick={()=>nav('/launch')}>Feed Launch</li>  
               <li onClick={()=>alert('coming soon')}>Feed Random</li>  
               <li onClick={()=>nav('/profile')}>Feed Me</li>  
+              <li onClick={()=>nav('/feeds')}>Feed Them</li>  
             </ul> 
             </MenuContainer>
           <LoginContainer><MenuLink onClick={loggedIn ? async ()=>onClickLogout() : async ()=>onClickLogin()}>{loggedIn ? "Logout": "Login"}</MenuLink></LoginContainer>

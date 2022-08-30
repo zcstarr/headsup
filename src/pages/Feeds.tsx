@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { login,  mintToken } from "../lib/login";
 import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
-import { getPersonalFeeds, getTokenIdMetadata, getTokenName, launchNewNFTFeed } from "../lib/feedLauncher";
+import { getAllFeeds, getPersonalFeeds, getTokenIdMetadata, getTokenName, launchNewNFTFeed } from "../lib/feedLauncher";
 import * as utils from "../lib/utils";
 import Button, { CommonRoundedButton } from "../components/button";
 import * as inputs from '../components/Input';
@@ -115,7 +115,10 @@ export default () => {
 
   useEffect(()=> {
     async function updateCards(){
-      const ff = await getFeedCards(["0xd9E9a9A032d3878b65A60ec7F96b6Fd2859C981c", "0x4136F42F40ee8F25afd6d1A604138Dd162f82F6d"])
+      const feedList = await getAllFeeds(0,100, false);
+      const cardAddrs = utils.parseListResult(feedList)
+      const ff = await getFeedCards(cardAddrs)
+      console.log(cardAddrs)
       setFeaturedCards(ff)
     }
     updateCards()

@@ -69,10 +69,8 @@ const LaunchForm = () => {
   useEffect(()=>{
     async function launchFeed(){
     if(submission && primaryAccount){
-      alert('here')
       if(feedSymbol && feedName && feedDesc && !feedAddr) {
       // TODO rename to metadata
-      alert(feedSymbol + feedName + feedDesc)
       try {
         const metadata = await apiClient.createNftFeedMetadata(feedSymbol, feedName, feedDesc)
         if(!metadata.jsonUrl) throw new Error('jsonurl metadata fail');
@@ -83,7 +81,6 @@ const LaunchForm = () => {
           if(coverImage) formData.append("coverImage", coverImage, coverImage.name);
           formData.append("feedDesc", feedDesc);
           formData.append("feedAddr", address);
-
           const result = await fetch(config.COVER_META_ROUTE, {
             method: "POST",
             body: formData,
@@ -131,10 +128,6 @@ const LaunchForm = () => {
     <InputContainer>
       <CommonRoundedButton onClick={()=>setSubmission(true)}>Launch Feed {submission}</CommonRoundedButton>
     </InputContainer>
-    <dialog>
-      <div>One More Transaction Required.</div>
-      <div>Setting up your token feed data</div>
-    </dialog>
     </Container>
   )
 }
@@ -157,7 +150,6 @@ export default () => {
         primaryAccount,
         config.web3.currentProvider
       );
-      alert(JSON.stringify(assets));
     }
   };
   const displayFeeds = () =>
