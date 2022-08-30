@@ -17,13 +17,35 @@ import * as config from './config';
 import { ListResults } from './utils';
 import { fetchLSP8Metadata } from './lsp8';
 
-export async function getFeeds(upAcct: string, offset: number, limit: number) {
+
+export async function getAllFeeds(
+  offset: number,
+  limit: number,
+  descending: boolean
+) {
   const headsUp = new config.web3.eth.Contract(
     HeadsUpFactoryABI.abi as any,
     config.HEADUPS_FACTORY_ADDR,
   ) as any as HeadsUpFactory;
   const result = await headsUp.methods
-    .getNewsletters(upAcct, offset, limit)
+    .getDeployedFeeds(offset, limit, descending)
+    .call();
+  const list = result[0] || [];
+  const count = new BN(result[1]);
+  return [list, count] as ListResults<string>;
+
+}
+export async function getPersonalFeeds(
+  upAcct: string,
+  offset: number,
+  limit: number,
+) {
+  const headsUp = new config.web3.eth.Contract(
+    HeadsUpFactoryABI.abi as any,
+    config.HEADUPS_FACTORY_ADDR,
+  ) as any as HeadsUpFactory;
+  const result = await headsUp.methods
+    .getFeedsFrom(upAcct, offset, limit)
     .call();
   const list = result[0] || [];
   const count = new BN(result[1]);
@@ -214,6 +236,35 @@ export async function getIssue(feedAddr: string, issueNo: number) {
   const result = await headsUp.methods.getIssue(issueNo).call();
   const decodedResult = config.web3.utils.hexToUtf8(result);
   return JSON.parse(decodedResult) as HeadsUpDatum;
+}
+
+export async function setTokenMetadata(
+  acct: string,
+  feedAddr: string,
+  jsonUrl: string,
+) {
+  let rcpt: any;
+  const headsUp = new config.web3.eth.Contract(
+    HeadsUpABI.abi as any,
+    feedAddr,
+  ) as any as HeadsUp;
+  return new Promise((resolve) => {
+    headsUp.methods
+      .setUnifiedCollectionData(jsonUrl)
+      .send({
+        from: acct,
+      })
+      .on('receipt', (receipt: any) => {
+        rcpt = receipt;
+      })
+      .on('confirmation', (confirmation: number) => {
+        if (confirmation === 1) {
+          // eslint-disable-next-line no-alert
+          // alert(JSON.stringify(rcpt));
+          resolve(rcpt);
+        }
+      });
+  });
 }
 
 export async function setCover(

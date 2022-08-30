@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { login, mintToken } from "../lib/login";
 import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
-import { getFeeds, getIssue, getNumberOfIssue, launchNewNFTFeed, setCover, setNewIssue } from "../lib/feedLauncher";
+import { getPersonalFeeds, getIssue, getNumberOfIssue, launchNewNFTFeed, setCover, setNewIssue } from "../lib/feedLauncher";
 import * as utils from "../lib/utils";
 import Button, { CommonRoundedButton } from "../components/button";
 import * as inputs from "../components/Input";
@@ -17,11 +17,7 @@ import { useParams } from "react-router-dom";
 import { HeadsUpDatum } from "../generated/headsup_datum_schema";
 import MDEditor from '@uiw/react-md-editor';
 import rehypeSanitize from "rehype-sanitize";
-import {unified} from 'unified'
-import remarkParse from 'remark-parse'
-import remarkRehype from 'remark-rehype'
-import rehypeDocument from 'rehype-document'
-import rehypeFormat from 'rehype-format'
+
 
 interface FeedParam {
   feedAddr?: string;

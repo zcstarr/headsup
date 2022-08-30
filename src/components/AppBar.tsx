@@ -7,6 +7,7 @@ import Button from "./button";
 import React, { useContext, useEffect, useState } from "react";
 import Icon from "../images/temp-logo.png";
 import { ThemeProp } from "./types";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -34,6 +35,9 @@ const MenuContainer = styled.div`
     display:flex;
     min-width: 500px;
     justify-content:space-evenly;
+    li {
+      cursor: pointer;
+    }
   }
 `
 
@@ -61,11 +65,15 @@ const AnnouncementBarContent = styled.div`
   letter-spacing: .1rem;
 }
 `;
+const MenuLink = styled.div`
+  cursor: pointer;
+`
 
 const AppBar = () => {
   const [state, dispatch] = useContext(storage.globalContext);
   const { primaryAccount } = state;
   const [loggedIn, setLoggedIn] = useState<boolean>(!primaryAccount !== true);
+  const nav = useNavigate();
   async function onClickLogin() {
     const account = await login();
     if (account.length !== 0)
@@ -92,15 +100,15 @@ const AppBar = () => {
       </AnnouncementBar>
       <Header>
         <HeaderContent>
-          <IconContainer> <div>Home</div> </IconContainer>
+          <IconContainer> <MenuLink onClick={()=>nav('/')}>Home</MenuLink> </IconContainer>
           <MenuContainer> 
             <ul>
-              <li>Feed Launch</li>  
-              <li>Feed Random</li>  
-              <li>Feed Me</li>  
+              <li onClick={()=>nav('/launch')}>Feed Launch</li>  
+              <li onClick={()=>alert('coming soon')}>Feed Random</li>  
+              <li onClick={()=>nav('/profile')}>Feed Me</li>  
             </ul> 
             </MenuContainer>
-          <LoginContainer><div>Login</div></LoginContainer>
+          <LoginContainer><MenuLink onClick={loggedIn ? async ()=>onClickLogout() : async ()=>onClickLogin()}>{loggedIn ? "Logout": "Login"}</MenuLink></LoginContainer>
       </HeaderContent>
       </Header>
     </Container>

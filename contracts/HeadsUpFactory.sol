@@ -3,7 +3,6 @@ pragma solidity ^0.8.9;
 
 
 // Import this file to use console.log
-import "hardhat/console.sol";
 import "@lukso/lsp-smart-contracts/contracts/LSP0ERC725Account/LSP0ERC725Account.sol";
 import "@lukso/lsp-smart-contracts/contracts/LSP7DigitalAsset/presets/LSP7Mintable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -23,7 +22,7 @@ contract HeadsUpFactory is Ownable{
   error ExceededOffsetLimit(uint256 limit);
 
   address[] public deployedContracts;
-  mapping(address => address[]) public userAddressToNewsletters;
+  mapping(address => address[]) public userAddressToFeeds;
 
 
   constructor(address _newOwner) {
@@ -34,23 +33,49 @@ contract HeadsUpFactory is Ownable{
   function launchNftFeed(string calldata name, string calldata symbol, bytes calldata jsonUrlHash) public {
     HeadsUp hup = new HeadsUp(name, symbol, jsonUrlHash, msg.sender);
     deployedContracts.push(address(hup));
-    userAddressToNewsletters[address(msg.sender)].push(address(hup));
+    userAddressToFeeds[address(msg.sender)].push(address(hup));
     emit Launch(msg.sender, address(hup));
   }
 
-  function getNewsletters(address addr, uint offset, uint limit) public view returns(address [100] memory, uint){
-      address[100] memory newsletters;
+  function getFeedsFrom(address addr, uint offset, uint limit) public view returns(address [100] memory, uint){
+      address[100] memory feeds;
       uint count;
       if(limit > 100){
         revert ExceededOffsetLimit(limit);
       }
       uint boundary = offset + limit;
       
-      for (uint i=offset; i < userAddressToNewsletters[addr].length && i < boundary; i++) {
-        newsletters[i]=userAddressToNewsletters[addr][i];
+      for (uint i=offset; i < userAddressToFeeds[addr].length && i < boundary; i++) {
+        feeds[i]=userAddressToFeeds[addr][i];
         count = count + 1;
       }
-      return (newsletters, count);
+      return (feeds, count);
+  }
+
+  function getDeployedFeeds(uint offset, uint limit, bool descending) public view returns(address[100] memory, uint) {
+      address[100] memory feeds;
+      uint count;
+      if(limit > 100){
+        revert ExceededOffsetLimit(limit);
+      }
+
+      if(descending == true){
+      uint boundary = deployedContracts.length - offset;
+      
+      for (uint i=boundary - 1; i >= 0; i--) {
+        feeds[i] = deployedContracts[i];
+        count = count + 1;
+      }
+      return (feeds, count);
+      }
+
+      uint edge = offset + limit;
+      for (uint i=offset; i <deployedContracts.length && i < edge; i++) {
+        feeds[i] = deployedContracts[i];
+        count = count + 1;
+      }
+      return (feeds, count);
+
   }
 
 }

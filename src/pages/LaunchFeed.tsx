@@ -4,10 +4,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { login,  mintToken } from "../lib/login";
 import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
-import { getFeeds, launchNewNFTFeed } from "../lib/feedLauncher";
+import { getPersonalFeeds, launchNewNFTFeed, setTokenMetadata } from "../lib/feedLauncher";
 import * as utils from "../lib/utils";
 import Button, { CommonRoundedButton } from "../components/button";
 import * as inputs from '../components/Input';
+import { MessageBox } from "../components/MessageBox";
 import AppBar from "../components/AppBar";
 import { FileUploader } from "react-drag-drop-files";
 import styled from "styled-components";
@@ -42,28 +43,57 @@ display: flex;
 flex-direction: column;
 align-items: left;
 `
+const MyAlert = styled.dialog`
+ 
+
+`
 
 const LaunchForm = () => {
   const [feedSymbol, setFeedSymbol] = useState<string | undefined>('');
   const [feedName, setFeedName] = useState<string | undefined>('');
   const [feedDesc, setFeedDesc] = useState<string | undefined>('');
+  const [feedAddr, setFeedAddr] = useState<string | undefined>('');
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [coverImage, setCoverImage] = useState<File | undefined>();
   const [submission, setSubmission] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>()
   const [state] = useContext(storage.globalContext);
   const {primaryAccount} = state;
 
+  
+
+  const handleChange = (file: File) => {
+    console.log(file.arrayBuffer());
+    setCoverImage(file);
+  };
   useEffect(()=>{
     async function launchFeed(){
     if(submission && primaryAccount){
       alert('here')
-      if(feedSymbol && feedName && feedDesc) {
+      if(feedSymbol && feedName && feedDesc && !feedAddr) {
       // TODO rename to metadata
       alert(feedSymbol + feedName + feedDesc)
       try {
         const metadata = await apiClient.createNftFeedMetadata(feedSymbol, feedName, feedDesc)
         if(!metadata.jsonUrl) throw new Error('jsonurl metadata fail');
         const address = await launchNewNFTFeed(primaryAccount, feedSymbol, feedName, metadata.jsonUrl);
-        console.log(address)
-        alert(address)
+        setOpenDialog(true)
+        setFeedAddr(address);
+          const formData: FormData = new FormData();
+          if(coverImage) formData.append("coverImage", coverImage, coverImage.name);
+          formData.append("feedDesc", feedDesc);
+          formData.append("feedAddr", address);
+
+          const result = await fetch(config.COVER_META_ROUTE, {
+            method: "POST",
+            body: formData,
+            mode: "cors",
+          });
+          const value = (await result.json()) as {
+            jsonUrl: string;
+            cid: string;
+          };
+          await setTokenMetadata(primaryAccount, address, value.jsonUrl);
       }catch(e){
           console.error(e)
       }finally {
@@ -74,6 +104,7 @@ const LaunchForm = () => {
     }
     launchFeed()
   },[submission, primaryAccount])
+  
   return (
     <Container>
      <InputContainer>
@@ -88,9 +119,22 @@ const LaunchForm = () => {
      <inputs.InputLabel>Enter NFT Feed Description:</inputs.InputLabel>
       <inputs.CommonInput onChange={(event)=>setFeedDesc(event.target.value)}/>
     </InputContainer>
+      <InputContainer>
+        <inputs.InputLabel>Add Cover Image:</inputs.InputLabel>
+        <FileUploader
+          handleChange={handleChange}
+          name="file"
+          types={fileTypes}
+          multiple={false}
+        />
+      </InputContainer>
     <InputContainer>
       <CommonRoundedButton onClick={()=>setSubmission(true)}>Launch Feed {submission}</CommonRoundedButton>
     </InputContainer>
+    <dialog>
+      <div>One More Transaction Required.</div>
+      <div>Setting up your token feed data</div>
+    </dialog>
     </Container>
   )
 }
@@ -123,7 +167,7 @@ export default () => {
     async function checkFeeds() {
       if (primaryAccount) {
         const feeds = utils.parseListResult(
-          await getFeeds(primaryAccount, 0, 100)
+          await getPersonalFeeds(primaryAccount, 0, 100)
         ) as string[];
         setFeeds(feeds);
         displayMetadata(feeds[0]);

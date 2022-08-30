@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { login,  mintToken } from "../lib/login";
 import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
-import { getFeeds, getIssue, getNumberOfIssue, getOwner, launchNewNFTFeed } from "../lib/feedLauncher";
+import { getPersonalFeeds, getIssue, getNumberOfIssue, getOwner, launchNewNFTFeed } from "../lib/feedLauncher";
 import {CardsGrid, CardProps} from "../components/Card";
 import * as utils from "../lib/utils";
 import Button, { CommonRoundedButton } from "../components/button";

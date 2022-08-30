@@ -9,7 +9,7 @@ import {
 import { login, launchNewNFTFeed, mintToken } from './lib/login';
 import fetchLSP8Assets from './lib/lsp8';
 import * as storage from './lib/storage';
-import { getFeeds } from './lib/feedLauncher';
+import { getPersonalFeeds } from './lib/feedLauncher';
 import* as utils from './lib/utils';
 import Button from './components/button';
 import AppBar from './components/AppBar';

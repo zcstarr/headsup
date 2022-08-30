@@ -79,14 +79,15 @@ grid-auto-rows: auto;
 grid-template-columns: 1fr;
 grid-gap: 40px;
 align-self:center;
-max-width: fit-content;
 
 ${({ theme }: ThemeProp) => theme.base.mediaQueries.lg} {
   grid-template-columns: 1fr 1fr;
   align-self:center;
+  max-width: fit-content;
 }
 ${({ theme }: ThemeProp) => theme.base.mediaQueries.xl} {
   grid-template-columns: 1fr 1fr 1fr;
+  max-width: fit-content;
 }
 
 `

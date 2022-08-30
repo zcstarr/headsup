@@ -19,7 +19,7 @@ bytes12 constant _FIX_LSP8_METADATA_JSON_KEY_PREFIX = 0x9a26b4060ae7f7d5e3cd0000
 string constant ARRAY_PREFIX = string("[]");
 contract HeadsUp is IERC725Y, LSP8IdentifiableDigitalAsset{
  uint256 public tokenIdCounter;
- bytes32 public newsletterArrayKey;
+ bytes32 public feedArrayKey;
  // All tokens have the same metadata so we reshare this dynamically calculated md;
  bytes public tokenMetadataJsonUrl; 
   constructor(string memory name,
@@ -29,11 +29,12 @@ contract HeadsUp is IERC725Y, LSP8IdentifiableDigitalAsset{
               // NOTE cannot take back the name
               string memory arrayName = string(abi.encodePacked(name, ARRAY_PREFIX));
               uint256 count = 0;
-              newsletterArrayKey = LSP2Utils.generateArrayKey(arrayName);
+              // Key used for setting multiple issues data
+              feedArrayKey = LSP2Utils.generateArrayKey(arrayName);
 
               _setData(_LSP4_METADATA_KEY, jsonUrl);
               //Set the newsletter array key
-              _setData(newsletterArrayKey, abi.encodePacked(count));
+              _setData(feedArrayKey, abi.encodePacked(count));
 
               // uint256 tokenIds
               _setData(_LSP8_TOKENID_TYPE_KEY,abi.encodePacked(uint256(2)));
@@ -49,6 +50,15 @@ contract HeadsUp is IERC725Y, LSP8IdentifiableDigitalAsset{
 
   function computeView() public {
 
+  }
+
+  function setCollectionData(bytes memory jsonUrl) public onlyOwner {
+      _setData(_LSP4_METADATA_KEY, jsonUrl);
+  }
+
+  function setUnifiedCollectionData(bytes memory jsonUrl) public onlyOwner {
+      _setData(_LSP4_METADATA_KEY, jsonUrl);
+      tokenMetadataJsonUrl = jsonUrl;
   }
 
 //  "https://storage.swapp.land/ipfs/QmYycsFrPBMxXh87QgRnWXx3auvTYZrpnPVaW8kjsFUhbe"
@@ -110,22 +120,22 @@ contract HeadsUp is IERC725Y, LSP8IdentifiableDigitalAsset{
 
   function setNewIssue (bytes calldata content) public onlyOwner {
     
-    uint256 numIssues = uint256(bytes32(_getData(newsletterArrayKey)));
-    _setData(LSP2Utils.generateArrayElementKeyAtIndex(newsletterArrayKey, numIssues), content);
+    uint256 numIssues = uint256(bytes32(_getData(feedArrayKey)));
+    _setData(LSP2Utils.generateArrayElementKeyAtIndex(feedArrayKey, numIssues), content);
     unchecked {
-      _setData(newsletterArrayKey, abi.encodePacked(numIssues + 1));
+      _setData(feedArrayKey, abi.encodePacked(numIssues + 1));
     }
   }
 
   function updateIssue (bytes calldata content, uint256 issueNumber) public onlyOwner {
-    _setData(LSP2Utils.generateArrayElementKeyAtIndex(newsletterArrayKey, issueNumber), content);
+    _setData(LSP2Utils.generateArrayElementKeyAtIndex(feedArrayKey, issueNumber), content);
   }
 
   function getNumberOfIssues() public view returns (uint256) {
-    return uint256(bytes32(_getData(newsletterArrayKey)));
+    return uint256(bytes32(_getData(feedArrayKey)));
   }
 
   function getIssue(uint256 issueNumber) public view returns (bytes memory) {
-    return _getData(LSP2Utils.generateArrayElementKeyAtIndex(newsletterArrayKey, issueNumber));
+    return _getData(LSP2Utils.generateArrayElementKeyAtIndex(feedArrayKey, issueNumber));
   }
 }

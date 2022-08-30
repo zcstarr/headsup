@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { login, launchNewNFTFeed, mintToken } from "../lib/login";
 import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
-import { getFeeds, getTokenIdMetadata, getTokenMetadata, getTokenName } from "../lib/feedLauncher";
+import { getPersonalFeeds, getTokenIdMetadata, getTokenMetadata, getTokenName } from "../lib/feedLauncher";
 import * as utils from "../lib/utils";
 import Button from "../components/button";
 import AppBar from "../components/AppBar";

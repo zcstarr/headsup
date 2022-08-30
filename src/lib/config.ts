@@ -18,7 +18,8 @@ export const L16_RPC_URL = 'https://rpc.l16.lukso.network';
 export const L16_CHAIN_ID = 2828;
 export const HEADUPS_FACTORY_ADDR =
   process.env.REACT_APP_HEADSUP_MAIN_CONTRACT_ID ||
-  '0xde8BaE72564ea5313756AAD83bA64567Bd0787F7';
+  '0xbdDb2665a69d7182678B502C2b4d163e24fB2D44';
+//  '0xde8BaE72564ea5313756AAD83bA64567Bd0787F7';
 export const API_BASE_URL = process.env.REACT_APP_HEADSUP_ENV  ?  'https://api.feedhead.xyz' : 
 `http://${SERVER_HOST}:${SERVER_PORT}`
 

@@ -21,7 +21,7 @@ async function main() {
   const head = await HeadsUpFactory.deploy(
     '0xe1373Df18919752371D462A329f3a5F34D43aee0',
     {
-      gasLimit: 9000000,
+      gasLimit: 20000000,
       gasPrice: await provider.getGasPrice(),
     },
   );

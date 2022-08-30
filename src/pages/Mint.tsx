@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { login, mintToken } from "../lib/login";
 import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
-import { getFeeds, launchNewNFTFeed, mintFeed, setCover } from "../lib/feedLauncher";
+import { getPersonalFeeds, launchNewNFTFeed, mintFeed, setCover } from "../lib/feedLauncher";
 import * as utils from "../lib/utils";
 import Button, { CommonRoundedButton } from "../components/button";
 import * as inputs from "../components/Input";
