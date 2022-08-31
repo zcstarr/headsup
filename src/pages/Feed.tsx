@@ -61,6 +61,7 @@ const ControlContainer = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   column-gap: 2rem;
   grid-gap: 40px;
+  height: 60px;
 `
 const ControlMintContainer = styled.div`
   grid-area: left-control;

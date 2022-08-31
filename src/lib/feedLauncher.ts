@@ -157,7 +157,7 @@ export async function getTokenName(feedAddr: string): Promise<string> {
   ).call();
   return config.web3.utils.hexToUtf8(rawName);
 }
-
+ 
 export async function getTokenTopLevelMetadata(
   feedAddr: string,
 ): Promise<SimpleMeta> {

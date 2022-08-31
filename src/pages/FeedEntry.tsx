@@ -7,7 +7,7 @@ import * as storage from "../lib/storage";
 import { getPersonalFeeds, getIssue, getNumberOfIssue, getOwner, launchNewNFTFeed } from "../lib/feedLauncher";
 import {CardsGrid, CardProps} from "../components/Card";
 import * as utils from "../lib/utils";
-import Button, { CommonRoundedButton } from "../components/button";
+import Button, { CommonRoundedButton, CommonSquareButton } from "../components/button";
 import * as inputs from '../components/Input';
 import AppBar from "../components/AppBar";
 import { FileUploader } from "react-drag-drop-files";
@@ -43,6 +43,7 @@ function DragDrop() {
 }
 
 const Container = styled.div`
+position: relative;
 padding: 20px;
 display: flex;
 flex-direction: column;
@@ -50,6 +51,7 @@ justify-content: space-between;
 align-items: center;
 max-width: 768px;
 margin: 0 auto;
+margin-top:80px;
 `;
 
 const FeedTitleContainer = styled.div`
@@ -66,6 +68,16 @@ const FeedImage = styled.img`
 
 `
 
+const MintButton = styled(CommonSquareButton)`
+padding:0;
+align-self:flex-start;
+margin-bottom: 10px;
+`
+const FeedControls = styled.div`
+display: flex;
+flex-direction: row-direction;
+justify-content: space-between;
+`
 const FeedContentContainer = styled.div`
 
 
@@ -140,7 +152,7 @@ const FeedEntry = () => {
   },[primaryAccount])
   return (
     <Container>
-      <FeedLink onClick={()=>nav(`/feed/${feedAddr}`)}>Feed</FeedLink>
+        <MintButton onClick={()=>nav(`/feed/${feedAddr}`)}>Feed Mint</MintButton>
       <FeedImageContainer>
         <FeedImage src={feedDatum?.imageUrl}></FeedImage>
       </FeedImageContainer>

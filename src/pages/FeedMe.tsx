@@ -16,7 +16,8 @@ import {apiClient} from "../lib/config";
 import { CardProps, CardsGrid } from "../components/Card";
 import { Heading } from "../components/Heading";
 import {Spacer} from '../components';
-
+import Loading from '../images/loading.png';
+import { delay } from "../components/MessageBox";
 function DragDrop() {
   const [file, setFile] = useState<File | undefined>();
   useEffect(()=> {
@@ -32,7 +33,15 @@ function DragDrop() {
     <FileUploader handleChange={handleChange} name="file" types={fileTypes} />
   );
 }
+const LoadingImg = styled.img`
 
+`
+const LoadingImgContainer = styled.div`
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+`
 const Container = styled.div`
 padding: 20px;
 display: flex;
@@ -102,6 +111,7 @@ export default () => {
   const [feeds, setFeeds] = useState<string[]>([]);
   const [yourCards, setYourCards] = useState<CardProps[]>([]);
   const [yourTokenFeedCards, setYourTokenFeedCards] = useState<CardProps[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
 
 
@@ -134,6 +144,8 @@ export default () => {
       const personalFeedCards = await getFeedCards(personalFeed);
 
       const ownerFeedCards = ownedTokenFeed.map((ownedFeedAddr)=>cache[ownedFeedAddr]);
+      setLoading(false);
+      await delay(500)
       setYourCards(personalFeedCards)
       setYourTokenFeedCards(ownerFeedCards)
       }

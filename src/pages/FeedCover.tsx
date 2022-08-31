@@ -6,7 +6,7 @@ import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
 import { getPersonalFeeds, launchNewNFTFeed, setCover, setTokenMetadata } from "../lib/feedLauncher";
 import * as utils from "../lib/utils";
-import Button, { CommonRoundedButton } from "../components/button";
+import Button, { CommonRoundedButton, CommonSquareButton } from "../components/button";
 import * as inputs from "../components/Input";
 import AppBar from "../components/AppBar";
 import { FileUploader } from "react-drag-drop-files";
@@ -65,7 +65,7 @@ const FeedCoverForm = () => {
   const [message, setMessage] = useState<string | undefined>();
   const [onOK, setOk] = useState<()=>void>(()=>setModal(false));
   const nav = useNavigate();
-  const [state] = useContext(storage.globalContext);
+  const [state, dispatch] = useContext(storage.globalContext);
   const { feedAddr } = useParams();
   const { primaryAccount } = state;
 
@@ -78,21 +78,6 @@ const FeedCoverForm = () => {
     async function uploadCover() {
       if (primaryAccount && feedAddr && submission && feedDesc && coverImage) {
         try {
-          /* const metadata = await apiClient.createNftFeedMetadata(
-              feedSymbol,
-              feedName,
-              feedDesc
-            );*/
-          // apiClient.updateNftCoverData()
-          /*if (!metadata.jsonUrl) throw new Error("jsonurl metadata fail");
-            const address = await launchNewNFTFeed(
-              primaryAccount,
-              feedSymbol,
-              feedName,
-              metadata.jsonUrl
-
-
-            ); */
           const formData: FormData = new FormData();
 
           formData.append("coverImage", coverImage, coverImage.name);
@@ -108,16 +93,29 @@ const FeedCoverForm = () => {
             jsonUrl: string;
             cid: string;
           };
-          setModal(true)
+          dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true}})
           await setTokenMetadata(primaryAccount, feedAddr, value.jsonUrl);
-          setMessage('Transaction complete')
+          dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'Transaction Complete'}})
           setOk(()=> {setModal(false); nav(`/profile`)});
           if(!modal) setModal(true);
 
         } catch (e) {
-          console.error(e);
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'Err. something went wrong'}})
         } finally {
           setSubmission(false);
+        }
+      }else {
+        if(submission){
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'You must set both feed description and an image'}})
+          setSubmission(false)
         }
       }
     }
@@ -141,15 +139,11 @@ const FeedCoverForm = () => {
         />
       </InputContainer>
       <InputContainer>
-        <CommonRoundedButton onClick={() => setSubmission(true)}>
+        <CommonSquareButton onClick={() => setSubmission(true)}>
           Submit {submission}
-        </CommonRoundedButton>
+        </CommonSquareButton>
       </InputContainer>
     </Container>
-
-  <MessageBox open={modal} onOk={()=>setModal(false)}>
-    <div>{message ? message : "Performing transactions wait for wallet confirmation"}</div>
-    </MessageBox>
   </>
   );
 };
