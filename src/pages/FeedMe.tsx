@@ -173,7 +173,7 @@ export default () => {
     <Container>
       <Heading>I Made This</Heading>
         <CardsGrid cards={yourCards}/>
-      <Heading>Feed Bag</Heading>
+      <Heading id="#feedbag">Feed Bag</Heading>
         <CardsGrid cards={yourTokenFeedCards}/>
     </Container>
     <Spacer/>

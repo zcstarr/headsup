@@ -63,7 +63,6 @@ const LaunchForm = () => {
   
 
   const handleChange = (file: File) => {
-    console.log(file.arrayBuffer());
     setCoverImage(file);
   };
   useEffect(()=>{

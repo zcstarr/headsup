@@ -9,6 +9,7 @@ import Icon from "../images/temp-logo.png";
 import { ThemeProp } from "./types";
 import { useNavigate } from "react-router-dom";
 import { getRandomFeed } from "../lib/feedLauncher";
+import MessageBox from "./MessageBox";
 
 const Container = styled.div`
   display: flex;
@@ -73,7 +74,7 @@ const MenuLink = styled.div`
 
 const AppBar = () => {
   const [state, dispatch] = useContext(storage.globalContext);
-  const { primaryAccount } = state;
+  const { primaryAccount, showMessage } = state;
   const [loggedIn, setLoggedIn] = useState<boolean>(!primaryAccount !== true);
   const [calcRandom, setCalcRandom] =useState<boolean>(false)
   const nav = useNavigate();
@@ -105,6 +106,10 @@ const AppBar = () => {
   },[calcRandom])
   // <Button onClick={loggedIn ? async ()=>onClickLogout() : async ()=>onClickLogin()}>{loggedIn ? "Logout": "Login"} </Button>
   return (
+    <>  
+    <MessageBox open={showMessage?.show || false} onOk={()=>dispatch({type: storage.ActionType.HIDE_MSG_BOX})}>
+    <div>{showMessage?.message ? showMessage?.message : "Performing transactions wait for wallet confirmation"}</div>
+    </MessageBox>
     <Container>
       <AnnouncementBar>
         <AnnouncementBarContent onClick={()=>nav('/launch')}>
@@ -126,6 +131,8 @@ const AppBar = () => {
       </HeaderContent>
       </Header>
     </Container>
+</>
+
   );
 };
 export default AppBar;

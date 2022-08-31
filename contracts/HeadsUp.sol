@@ -80,9 +80,9 @@ contract HeadsUp is IERC725Y, LSP8IdentifiableDigitalAsset{
     
     // bytes32 tokendMetadataIdKey = LSP2Utils.generateMappingKey(_FIX_LSP8_METADATA_JSON_KEY_PREFIX, bytes20(abi.encodePacked(tokenIdCounter))); 
     _mint(msg.sender,bytes32(tokenIdCounter),force,bytes("mint token"));
+      tokenIdCounter++;
     // bytes32 memory tokenMetadataKey = keccack(abi.encodePacked(_LSP8_METADATA_JSON_KEY_PREFIX,tokenIdCounter));
     // _setData(tokenMetadataIdKey, jsonUrlHash);
-     // tokenIdCounter++;
     // _mint(msg.sender,);
   }
 

@@ -13,7 +13,8 @@ import { FileUploader } from "react-drag-drop-files";
 import styled from "styled-components";
 const fileTypes = ["JPG", "PNG", "GIF", "SVG"];
 import { apiClient } from "../lib/config";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import MessageBox from "../components/MessageBox";
 
 interface FeedParam {
   feedAddr?: string;
@@ -60,6 +61,10 @@ const FeedCoverForm = () => {
   const [feedDesc, setFeedDesc] = useState<string | undefined>("");
   const [coverImage, setCoverImage] = useState<File | undefined>();
   const [submission, setSubmission] = useState<boolean>(false);
+  const [modal, setModal] = useState<boolean>(false);
+  const [message, setMessage] = useState<string | undefined>();
+  const [onOK, setOk] = useState<()=>void>(()=>setModal(false));
+  const nav = useNavigate();
   const [state] = useContext(storage.globalContext);
   const { feedAddr } = useParams();
   const { primaryAccount } = state;
@@ -103,7 +108,11 @@ const FeedCoverForm = () => {
             jsonUrl: string;
             cid: string;
           };
+          setModal(true)
           await setTokenMetadata(primaryAccount, feedAddr, value.jsonUrl);
+          setMessage('Transaction complete')
+          setOk(()=> {setModal(false); nav(`/profile`)});
+          if(!modal) setModal(true);
 
         } catch (e) {
           console.error(e);
@@ -115,6 +124,7 @@ const FeedCoverForm = () => {
     uploadCover();
   }, [submission, primaryAccount, feedDesc, feedAddr, coverImage]);
   return (
+    <>
     <Container>
       <InputContainer>
         <inputs.InputLabel>Enter NFT Feed Description:</inputs.InputLabel>
@@ -136,9 +146,18 @@ const FeedCoverForm = () => {
         </CommonRoundedButton>
       </InputContainer>
     </Container>
+
+  <MessageBox open={modal} onOk={()=>setModal(false)}>
+    <div>{message ? message : "Performing transactions wait for wallet confirmation"}</div>
+    </MessageBox>
+  </>
   );
 };
 
 export default () => {
-  return <FeedCoverForm />;
+  return (<>
+
+<FeedCoverForm />
+
+  </>);
 };

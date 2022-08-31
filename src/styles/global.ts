@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import Pattern from '../images/pattern.png'
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -18,4 +19,5 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+// background: white;
 export default GlobalStyle;

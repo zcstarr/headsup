@@ -6,9 +6,14 @@ export const initialAppState: GlobalState = JSON.parse(
   localStorage.getItem(APP_STATE) || '{}',
 ) as GlobalState;
 
+export interface MessageProp {
+  message?: string ;
+  show: boolean;
+}
 interface GlobalState {
   primaryAccount?: string;
   activeFeedAddr?: string;
+  showMessage?: MessageProp;
 }
 
 // eslint-disable-next-line no-shadow
@@ -17,6 +22,8 @@ export enum ActionType {
   LOGOUT = 'logout',
   SET_ACTIVE_FEED = 'set_active_feed',
   RM_ACTIVE_FEED = 'rm_active_feed',
+  SHOW_MSG_BOX = 'show_msg_box',
+  HIDE_MSG_BOX = 'hide_msg_box'
 }
 
 type Action =
@@ -31,7 +38,15 @@ type Action =
   | {
       type: ActionType.RM_ACTIVE_FEED;
       payload?: string;
-    };
+    }
+  | {
+    type: ActionType.HIDE_MSG_BOX;
+  } | {
+    type: ActionType.SHOW_MSG_BOX;
+    payload: MessageProp;
+  }
+  
+  ;
 
 function setGlobalState<T extends keyof GlobalState>(
   key: T,
@@ -68,6 +83,10 @@ export const globalStorageReducer: Reducer<GlobalState, Action> = (
       return setGlobalState('activeFeedAddr', state, action.payload);
     case ActionType.RM_ACTIVE_FEED:
       return clearGlobalState('activeFeedAddr', state);
+    case ActionType.SHOW_MSG_BOX:
+      return {...state, showMessage: action.payload}
+    case ActionType.HIDE_MSG_BOX:
+      return {...state, showMessage: {show: false}}
     default:
       return state;
   }

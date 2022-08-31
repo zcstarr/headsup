@@ -22,6 +22,7 @@ import FeedMe from "./pages/FeedMe";
 import FeedEntryNew from './pages/FeedEntryNew';
 import FeedEntry from './pages/FeedEntry';
 import FeedCover from './pages/FeedCover';
+import { Spacer } from './components';
 
 
 function loginLogout(){
@@ -47,6 +48,7 @@ return (<Router>
       <Route path="/feed/:feedAddr/mint" element={<Mint/>}/>
       <Route path="/feed/:feedAddr" element={<Feed/>}/>
     </Routes>
+    <Spacer/>
 </Router>)
 
 }

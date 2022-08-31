@@ -173,7 +173,7 @@ export async function getTokenTopLevelMetadata(
   const ipfsUrl = convertIPFSUrl(url);
   console.log(ipfsUrl);
   const response = await (await fetch(ipfsUrl)).json();
-  const value = response.data as { LSP4Metadata: LSP4Metadata };
+  const value = response as { LSP4Metadata: LSP4Metadata };
   console.log(value);
   const { images } = value.LSP4Metadata;
   let imageUrl: undefined | string;

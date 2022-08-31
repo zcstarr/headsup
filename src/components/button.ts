@@ -49,6 +49,22 @@ export const CommonRoundedButton = styled(Button)`
     border-width: 5px;
   }
 `;
+
+export const CommonSquareButton = styled.button`
+  color: ${({ theme }: ThemeProp) => theme.colors.black};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-color: ${({ theme }: ThemeProp) => theme.colors.primary};
+  font-size: 1.3rem;
+  padding: 20px;
+  width: 150px;
+  border-style: solid;
+  border-width: 1px;
+  align-items: center;
+  align-text: center;
+
+`;
 export const CommonExtraRoundButton = styled(CommonRoundedButton)`
   border-radius: 40px;
   border-color: ${({ theme }: ThemeProp) => theme.colors.primary};

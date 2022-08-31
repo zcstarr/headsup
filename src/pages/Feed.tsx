@@ -4,10 +4,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { login,  mintToken } from "../lib/login";
 import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
-import { getPersonalFeeds, getIssue, getNumberOfIssue, getOwner, getTokenName, launchNewNFTFeed, mintFeed } from "../lib/feedLauncher";
+import { getPersonalFeeds, getIssue, getNumberOfIssue, getOwner, getTokenName, launchNewNFTFeed, mintFeed, getTokenTopLevelMetadata } from "../lib/feedLauncher";
 import {CardsGrid, CardGridContainer, CardProps, Card} from "../components/Card";
 import * as utils from "../lib/utils";
-import Button, { CommonRoundedButton } from "../components/button";
+import Button, { CommonRoundedButton, CommonSquareButton } from "../components/button";
+import MessageBox, { delay } from "../components/MessageBox";
 import * as inputs from '../components/Input';
 import AppBar from "../components/AppBar";
 import { FileUploader } from "react-drag-drop-files";
@@ -16,6 +17,8 @@ const fileTypes = ["JPG", "PNG", "GIF"];
 import {apiClient} from "../lib/config";
 import { useParams, useNavigate } from "react-router-dom";
 import { HeadsUpDatum } from "../generated/headsup_datum_schema";
+import { ThemeProp } from "../components/types"
+
 function DragDrop() {
   const [file, setFile] = useState<File | undefined>();
   useEffect(()=> {
@@ -52,6 +55,7 @@ display: flex;
 flex-direction: column;
 `
 const ControlContainer = styled.div`
+  grid-column: 1 / 4;
   display: grid;
   grid-template-areas: "left-control blank right-control";
   grid-template-columns: 1fr 1fr 1fr;
@@ -66,7 +70,14 @@ const ControlMintContainer = styled.div`
 
 const MintControl = styled.div`
   padding: 20px;
+  min-width: 200
   cursor: pointer;
+`
+const MintButton = styled(CommonSquareButton)`
+  width: 150px;
+  padding: 0px;
+  border-color: ${({theme}: ThemeProp)=>theme.colors.primary};
+
 `
 const Blank = styled.div`
   grid-area: blank;
@@ -78,6 +89,13 @@ const FeedName = styled.div`
   padding: 2rem;
   text-transform: uppercase;
 `
+const FeedDesc = styled.div`
+  font-family: lato,  sans-serif;
+  font-size: 1rem;
+  padding: 1rem;
+  text-transform: uppercase;
+  max-width: 400px;
+`
 const EditControls = styled.div`
   grid-area: right-control;
   display: flex;
@@ -87,19 +105,46 @@ const EditControls = styled.div`
 const EditControl = styled.div`
   padding: 20px;
   cursor: pointer;
+  border: black;
+  border-bottom-width: 1px;
+  transition: border-style 0.1s ease-in;
+  :hover {
+    border-style: solid;
+  }
 `
-
 const FeedControls = (props: {owner: boolean}) => {
   const {owner} = props;
   const nav = useNavigate();
-  const [state] = useContext(storage.globalContext);
+  const [state, dispatch] = useContext(storage.globalContext);
   const {primaryAccount} = state;
   const [isMinting, setMinting] = useState<boolean>(false);
   const {feedAddr} = useParams();
+  const [modal, setModal] = useState<boolean>(false);
+  const [message, setMessage] = useState<string | undefined>();
+  const [onOK, setOk] = useState<()=>void>(()=>setModal(false));
+
   useEffect(()=>{
     async function mint(){
       if(isMinting && primaryAccount && feedAddr){
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true}})
+        try {
+
+        setMinting(false);
         await mintFeed(primaryAccount, feedAddr)
+        }catch(e){
+        setMinting(false);
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'Something went wrong'}})
+        }
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'Your token was minted'}})
+         await delay(1000)
+        setMinting(false);
+         nav('/profile#feedbag');
       }
     }
     mint()
@@ -107,7 +152,7 @@ const FeedControls = (props: {owner: boolean}) => {
   return (
     <ControlContainer>
       <ControlMintContainer>
-        <MintControl onClick={() => setMinting(true)}>Mint</MintControl>
+        <MintButton onClick={() => setMinting(true)}>Mint</MintButton>
       </ControlMintContainer>
       <Blank></Blank>
       <EditControls>
@@ -129,9 +174,24 @@ const FeedControls = (props: {owner: boolean}) => {
           </>
         )}
       </EditControls>
+
     </ControlContainer>
   );
 }
+
+export const FeedCardsGrid = (props: {cards: CardProps[], owner: boolean})=>{
+
+  const {cards, owner} = props;
+  return (<CardGridContainer>
+    <FeedControls owner={owner}/>
+  { cards.map((card)=>
+   (
+    <Card {...card} key={utils.getUniqueKey('entrycard_')}/>
+    ))} 
+  </CardGridContainer>)
+} 
+
+
 
 
 export const FeedGrid = (props: {cards: CardProps[], owner: boolean})=> {
@@ -161,6 +221,7 @@ const FeedMetadata = () => {
 const Feed = () => {
   const [feeds, setFeeds] = useState<string[]>([]);
   const [feedName, setFeedName] = useState<string>('Searching for feed name...')
+  const [feedDesc, setFeedDesc] = useState<string>('Searching for feed desc...')
   const [state] = useContext(storage.globalContext);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [cards, setCards] = useState<CardProps[]>([]);
@@ -189,6 +250,9 @@ const Feed = () => {
       if(feedAddr){
     const name = await getTokenName(feedAddr);
     setFeedName(name)
+    const {desc} = await getTokenTopLevelMetadata(feedAddr);
+    console.log(desc)
+    setFeedDesc(desc || '')
       }
     }
     helper()
@@ -234,8 +298,8 @@ const Feed = () => {
   return (
     <Container>
       <FeedName>{feedName}</FeedName>
-      <FeedControls owner={isOwner}/>
-      <CardsGrid cards={cards}/>
+      <FeedDesc>{feedDesc}</FeedDesc>
+      <FeedCardsGrid cards={cards} owner={isOwner}/>
     </Container>
   )
 }

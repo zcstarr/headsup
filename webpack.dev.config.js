@@ -44,7 +44,7 @@ module.exports = (_, argv) => {
           NODE_ENV: 'development',
           REACT_APP_HEADSUP_FRONTEND_URI:'',
           REACT_APP_HEADSUP_ENV:'',
-          REACT_APP_HEADSUP_MAIN_CONTRACT_ID:'',
+          REACT_APP_HEADSUP_MAIN_CONTRACT_ID:'0x9Fa0424f8276C9544048C194161B265807414Be4',
           REACT_APP_HEADSUP_IPFS_GATEWAY:''
       })
      /* new EnvironmentPlugin([

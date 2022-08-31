@@ -3,17 +3,18 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { login, mintToken } from "../lib/login";
 import fetchLSP8Assets from "../lib/lsp8";
+import MessageBox, { delay } from "../components/MessageBox";
 import * as storage from "../lib/storage";
 import { getPersonalFeeds, getIssue, getNumberOfIssue, launchNewNFTFeed, setCover, setNewIssue } from "../lib/feedLauncher";
 import * as utils from "../lib/utils";
-import Button, { CommonRoundedButton } from "../components/button";
+import Button, { CommonRoundedButton, CommonSquareButton } from "../components/button";
 import * as inputs from "../components/Input";
 import AppBar from "../components/AppBar";
 import { FileUploader } from "react-drag-drop-files";
 import styled from "styled-components";
 const fileTypes = ["JPG", "PNG", "GIF", "SVG"];
 import { apiClient } from "../lib/config";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { HeadsUpDatum } from "../generated/headsup_datum_schema";
 import MDEditor from '@uiw/react-md-editor';
 import rehypeSanitize from "rehype-sanitize";
@@ -65,9 +66,10 @@ const FeedCoverForm = () => {
   const [entryImage, setEntryImage] = useState<File | undefined>();
   const [entryContent, setEntryContent] = useState<string | undefined>();
   const [submission, setSubmission] = useState<boolean>(false);
-  const [state] = useContext(storage.globalContext);
+  const [state, dispatch] = useContext(storage.globalContext);
+  const nav = useNavigate();
   const { feedAddr } = useParams();
-  const { primaryAccount } = state;
+  const { primaryAccount, showMessage } = state;
 
   const handleChange = (file: File) => {
     console.log(file.arrayBuffer());
@@ -77,6 +79,10 @@ const FeedCoverForm = () => {
   useEffect(() => {
     async function uploadNewEntry() {
       if ( (entryContent || entryImage) && primaryAccount && feedAddr && submission && entryTitle) {
+        setSubmission(false)
+       dispatch({
+            type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true}});
         try {
           const formData: FormData = new FormData();
           if(entryImage) {
@@ -110,15 +116,34 @@ const FeedCoverForm = () => {
           const hexxed = config.web3.utils.utf8ToHex(content);
           const result = await setNewIssue(primaryAccount,feedAddr,hexxed);
           const numEntries = await getNumberOfIssue(feedAddr);
-          
-          const entry = await getIssue(feedAddr, numEntries-1);
-          console.log(entry)
-          // console.log(result)
+         dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'New issue created'}});
+          await delay(1000)
+          nav(`/feed/${feedAddr}/entry/${numEntries-1}`);
+   
         } catch (e) {
-          console.error(e);
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'Error could not complete tx'}});
         } finally {
           setSubmission(false);
         }
+      } else {
+        if( submission){
+          setSubmission(false)
+        let message; 
+        if(!entryContent && !entryImage){
+          message ="Either Image or Content must be set"
+        }
+        if(!entryTitle){
+          message ="Must set title"
+          
+        }
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: message}});
+      }
       }
     }
     uploadNewEntry();
@@ -153,9 +178,9 @@ const FeedCoverForm = () => {
         />
       </InputContainer>
       <InputContainer>
-        <CommonRoundedButton onClick={() => setSubmission(true)}>
+        <CommonSquareButton onClick={() => setSubmission(true)}>
           Add Entry {submission}
-        </CommonRoundedButton>
+        </CommonSquareButton>
       </InputContainer>
     </Container>
   );
