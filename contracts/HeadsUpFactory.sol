@@ -60,9 +60,9 @@ contract HeadsUpFactory is Ownable{
       }
 
       if(descending == true){
-      uint boundary = deployedContracts.length - offset;
+      uint start= deployedContracts.length - offset;
       
-      for (uint i=boundary - 1; i >= 0; i--) {
+      for (uint i=start - 1; i >= 0; i--) {
         feeds[i] = deployedContracts[i];
         count = count + 1;
       }

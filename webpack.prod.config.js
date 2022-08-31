@@ -34,7 +34,7 @@ module.exports = (_, argv) => {
           NODE_ENV: 'production',
           REACT_APP_HEADSUP_FRONTEND_URI:'',
           REACT_APP_HEADSUP_ENV:'',
-          REACT_APP_HEADSUP_MAIN_CONTRACT_ID:'',
+          REACT_APP_HEADSUP_MAIN_CONTRACT_ID:'0x82472A22F8896D0f684C9d847f19B68A22F3C180',
           REACT_APP_HEADSUP_IPFS_GATEWAY:''
       })
     ],

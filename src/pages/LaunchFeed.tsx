@@ -6,7 +6,7 @@ import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
 import { getPersonalFeeds, launchNewNFTFeed, setTokenMetadata } from "../lib/feedLauncher";
 import * as utils from "../lib/utils";
-import Button, { CommonRoundedButton } from "../components/button";
+import Button, { CommonRoundedButton, CommonSquareButton } from "../components/button";
 import * as inputs from '../components/Input';
 import { MessageBox } from "../components/MessageBox";
 import AppBar from "../components/AppBar";
@@ -14,6 +14,7 @@ import { FileUploader } from "react-drag-drop-files";
 import styled from "styled-components";
 const fileTypes = ["JPG", "PNG", "GIF"];
 import {apiClient} from "../lib/config";
+import { useNavigate } from "react-router-dom";
 function DragDrop() {
   const [file, setFile] = useState<File | undefined>();
   useEffect(()=> {
@@ -53,11 +54,10 @@ const LaunchForm = () => {
   const [feedName, setFeedName] = useState<string | undefined>('');
   const [feedDesc, setFeedDesc] = useState<string | undefined>('');
   const [feedAddr, setFeedAddr] = useState<string | undefined>('');
-  const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [coverImage, setCoverImage] = useState<File | undefined>();
   const [submission, setSubmission] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>()
-  const [state] = useContext(storage.globalContext);
+  const [state, dispatch] = useContext(storage.globalContext);
+  const nav = useNavigate()
   const {primaryAccount} = state;
 
   
@@ -68,16 +68,22 @@ const LaunchForm = () => {
   useEffect(()=>{
     async function launchFeed(){
     if(submission && primaryAccount){
-      if(feedSymbol && feedName && feedDesc && !feedAddr) {
+      setSubmission(false);
+      if(feedSymbol && feedName && feedDesc && coverImage && !feedAddr) {
       // TODO rename to metadata
       try {
         const metadata = await apiClient.createNftFeedMetadata(feedSymbol, feedName, feedDesc)
         if(!metadata.jsonUrl) throw new Error('jsonurl metadata fail');
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'Sign transaction 1 of 2 with your wallet'}});
         const address = await launchNewNFTFeed(primaryAccount, feedSymbol, feedName, metadata.jsonUrl);
-        setOpenDialog(true)
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'Transaction 1 of 2 complete'}});
         setFeedAddr(address);
           const formData: FormData = new FormData();
-          if(coverImage) formData.append("coverImage", coverImage, coverImage.name);
+          formData.append("coverImage", coverImage, coverImage.name);
           formData.append("feedDesc", feedDesc);
           formData.append("feedAddr", address);
           const result = await fetch(config.COVER_META_ROUTE, {
@@ -89,14 +95,31 @@ const LaunchForm = () => {
             jsonUrl: string;
             cid: string;
           };
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'Sign transaction 2 of 2 with your wallet'}});
           await setTokenMetadata(primaryAccount, address, value.jsonUrl);
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'Transaction 2 of 2 complete'}});
+          nav(`/feed/${address}`)
       }catch(e){
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'Error something went wrong'}});
           console.error(e)
       }finally {
         setSubmission(false);
       }
+      }else {
+        if(!feedSymbol || !feedName || !feedDesc || !coverImage){
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'You must set symbol, name, image, and description'}});
+        }
+          setSubmission(false)
+        }
       }
-    }
     }
     launchFeed()
   },[submission, primaryAccount])
@@ -125,7 +148,7 @@ const LaunchForm = () => {
         />
       </InputContainer>
     <InputContainer>
-      <CommonRoundedButton onClick={()=>setSubmission(true)}>Launch Feed {submission}</CommonRoundedButton>
+      <CommonSquareButton onClick={()=>setSubmission(true)}>Launch Feed {submission}</CommonSquareButton>
     </InputContainer>
     </Container>
   )
@@ -134,39 +157,6 @@ const LaunchForm = () => {
 export default () => {
   const [state , dispatch] = useContext(storage.globalContext);
   const {activeFeedAddr, primaryAccount} = state;
-  const [feedAddr, setFeedAddr] = useState<string | undefined>(activeFeedAddr);
-  const [feeds, setFeeds] = useState<string[]>([]);
-
-
-  function getUniqueKey(prefix: string): string {
-    return `${prefix}_${Math.random()}`;
-  }
-
-  const displayMetadata = async (feed: string) => {
-    if (primaryAccount) {
-      const assets = await fetchLSP8Assets(
-        feed,
-        primaryAccount,
-        config.web3.currentProvider
-      );
-    }
-  };
-  const displayFeeds = () =>
-    feeds.map((f) => <li key={getUniqueKey("feed_")}>{f}</li>);
-
-  useEffect(() => {
-    async function checkFeeds() {
-      if (primaryAccount) {
-        const feeds = utils.parseListResult(
-          await getPersonalFeeds(primaryAccount, 0, 100)
-        ) as string[];
-        setFeeds(feeds);
-        displayMetadata(feeds[0]);
-        setFeedAddr(feeds[0]);
-      }
-    }
-    checkFeeds();
-  }, [primaryAccount]);
 
   return (
       <LaunchForm/>

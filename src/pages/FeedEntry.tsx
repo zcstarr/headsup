@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { login,  mintToken } from "../lib/login";
 import fetchLSP8Assets from "../lib/lsp8";
 import * as storage from "../lib/storage";
-import { getPersonalFeeds, getIssue, getNumberOfIssue, getOwner, launchNewNFTFeed } from "../lib/feedLauncher";
+import { getPersonalFeeds, getIssue, getNumberOfIssue, getOwner, launchNewNFTFeed, mintFeed } from "../lib/feedLauncher";
 import {CardsGrid, CardProps} from "../components/Card";
 import * as utils from "../lib/utils";
 import Button, { CommonRoundedButton, CommonSquareButton } from "../components/button";
@@ -26,6 +26,7 @@ import rehypeDocument from 'rehype-document'
 import rehypeFormat from 'rehype-format'
 
 import BN from "bn.js";
+import { delay } from "../components/MessageBox";
 function DragDrop() {
   const [file, setFile] = useState<File | undefined>();
   useEffect(()=> {
@@ -91,6 +92,19 @@ const FeedUserData = styled.div`
 
 
 `
+/*const FeedButton = styled.div`
+  padding: 0px;
+  cursor: pointer;
+  border: black;
+  border-bottom-width: 1px;
+  transition: border-style 0.1s ease-in;
+  :hover {
+    border-style: solid;
+  }
+`*/
+const FeedButton = styled(MintButton)`
+  border: black;
+`
 const FeedLink = styled.div`
 text-align: left;
 font-size: 1rem;
@@ -113,9 +127,10 @@ async function cleanUp(content: string): Promise<any>{
 
 const FeedEntry = () => {
   const [feeds, setFeeds] = useState<string[]>([]);
-  const [state] = useContext(storage.globalContext);
+  const [state, dispatch] = useContext(storage.globalContext);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const {feedAddr, feedIssue} = useParams();
+  const [isMinting, setMinting] = useState<boolean>(false);
   const nav = useNavigate();
   const {primaryAccount} = state;
   const [feedDatum, setFeedDatum] = useState<HeadsUpDatum| undefined>();
@@ -140,6 +155,33 @@ const FeedEntry = () => {
       }
     getFeedEntry();
   }, [primaryAccount]);
+
+  useEffect(()=>{
+    async function mint(){
+      if(isMinting && primaryAccount && feedAddr){
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true}})
+        try {
+
+        setMinting(false);
+        await mintFeed(primaryAccount, feedAddr)
+        }catch(e){
+        setMinting(false);
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'Something went wrong'}})
+        }
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {show: true, message: 'Your token was minted'}})
+         await delay(1000)
+        setMinting(false);
+         nav('/profile#feedbag');
+      }
+    }
+    mint()
+  }, [primaryAccount, isMinting])
   useEffect(()=> {
     async function checkOwner(){
     if(feedAddr && primaryAccount){
@@ -152,7 +194,10 @@ const FeedEntry = () => {
   },[primaryAccount])
   return (
     <Container>
-        <MintButton onClick={()=>nav(`/feed/${feedAddr}`)}>Feed Mint</MintButton>
+      <FeedControls>
+        <MintButton onClick={()=>setMinting(true)}>Feed Mint</MintButton>
+        <FeedButton onClick={()=>nav(`/feed/${feedAddr}`)}>Back to Feed</FeedButton>
+      </FeedControls>
       <FeedImageContainer>
         <FeedImage src={feedDatum?.imageUrl}></FeedImage>
       </FeedImageContainer>

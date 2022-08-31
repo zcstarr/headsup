@@ -104,7 +104,6 @@ export async function mintFeed(acct: string, feedAddr: string) {
       .on('confirmation', (confirmation: number) => {
         if (confirmation === 1) {
           // eslint-disable-next-line no-alert
-          alert(JSON.stringify(rcpt));
           resolve(rcpt);
         }
       });
@@ -264,7 +263,6 @@ export async function setNewIssue(
       .on('confirmation', (confirmation: number) => {
         if (confirmation === 1) {
           // eslint-disable-next-line no-alert
-          alert(JSON.stringify(rcpt));
           resolve(rcpt);
         }
       });
@@ -371,29 +369,8 @@ export async function launchNewNFTFeed(
       .on('confirmation', (confirmation: number) => {
         if (confirmation === 1) {
           // eslint-disable-next-line no-alert
-          alert(JSON.stringify(rcpt));
           resolve(rcpt.events.Launch.returnValues.to);
         }
       });
-    /* headsUp.methods.
-    contract.methods['launchNewsletter(string,string)'](feedSymbol, feedName, metdataUrl)
-      .send({
-        from: acct,
-      })
-      .on('receipt', (receipt: any) => {
-        rcpt = receipt;
-        console.log('txReciept', receipt);
-      })
-      .on('confirmation', (confirmation: number) => {
-        if (confirmation === 1) {
-          // eslint-disable-next-line no-alert
-          alert(JSON.stringify(rcpt));
-          resolve(rcpt.events.Launch.returnValues.to);
-        }
-      })
-      .once('sending', (payload: unknown) => {
-        console.log('sending', payload);
-      });
-  */
   });
 }

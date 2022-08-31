@@ -41,7 +41,6 @@ export async function launchNewNFTFeed(
       .on('confirmation', (confirmation: number) => {
         if (confirmation === 1) {
           // eslint-disable-next-line no-alert
-          alert(JSON.stringify(rcpt));
           resolve(rcpt.events.Launch.returnValues.to);
         }
       })
