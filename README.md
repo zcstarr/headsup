@@ -13,6 +13,7 @@ Website at https://feedhead.xyz give it a [try](https://feedhead.xyz)
   - [Deployment](#deployment)
   - [Contract Addresses](#contract)
   - [Team](#team)
+  - [Video](https://www.youtube.com/watch?v=o2diktGPTpo)
 
 ## What the $F@# is Feedhead?
 
