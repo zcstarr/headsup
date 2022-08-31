@@ -93,4 +93,4 @@ LUKSO_DEPLOY_KEY = npm run deploy-testnet
  See [Future](./FUTURE.md)
 
 ### Team
-Zane Starr - zane[at]gmail.com
+Zane Starr - zcstarr[at]gmail.com
