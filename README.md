@@ -12,6 +12,7 @@
   - [Getting Started](#getting-started)
   - [Deployment](#deployment)
   - [Contract Addresses](#contract)
+  - [Team](#team)
 
 ## What the $F@# is Feedhead?
 
@@ -87,7 +88,7 @@ LUKSO_DEPLOY_KEY = npm run deploy-testnet
 - Current dev factory: `0x1B84491eA5d0AdC06904a3ba0bd098274cd16126`
 - Current prod factory: `0x82472A22F8896D0f684C9d847f19B68A22F3C180`
  
- ### Deeper PHilosophical Dive
+ ### Deeper Philosophical Dive
  See [Future](./FUTURE.md)
 
 ### Team
