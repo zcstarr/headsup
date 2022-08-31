@@ -119,7 +119,11 @@ export default () => {
 
   useEffect(()=> {
     async function updateCards(){
-      const ff = await getFeaturedCards(["0xd9E9a9A032d3878b65A60ec7F96b6Fd2859C981c", "0x4136F42F40ee8F25afd6d1A604138Dd162f82F6d"])
+      const ff = await getFeaturedCards([
+        "0x233F67f95949069D69Af391Ef8e1992EA0570065",
+        "0x7a5ACcd1356E35BC870C106175Dc69624B63c615",
+        "0x2E33f11de291d64FF1b6764D32cC4C4f40f8beb9",
+      ]);
       setFeaturedCards(ff)
     }
     updateCards()
