@@ -78,6 +78,26 @@ const AppBar = () => {
   const [loggedIn, setLoggedIn] = useState<boolean>(!primaryAccount !== true);
   const [calcRandom, setCalcRandom] =useState<boolean>(false)
   const nav = useNavigate();
+
+  useEffect(()=>{
+    pleaseLogin(()=>{})
+  },[])
+
+  function pleaseLogin(navFunc: ()=>void){
+    return () => {
+      if (!loggedIn) {
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {
+            show: true,
+            message: "Please login with your lukso up to get started",
+          },
+        });
+        return;
+      }
+      return navFunc();
+    };
+  }
   async function onClickLogin() {
     const account = await login();
     if (account.length !== 0)
@@ -112,7 +132,7 @@ const AppBar = () => {
     </MessageBox>
     <Container>
       <AnnouncementBar>
-        <AnnouncementBarContent onClick={()=>nav('/launch')}>
+        <AnnouncementBarContent onClick={pleaseLogin(()=>nav('/launch'))}>
           CREATE YOUR OWN 🤯 NFT FEED DROP
         </AnnouncementBarContent>
       </AnnouncementBar>
@@ -121,10 +141,10 @@ const AppBar = () => {
           <IconContainer> <MenuLink onClick={()=>nav('/')}>Home</MenuLink> </IconContainer>
           <MenuContainer> 
             <ul>
-              <li onClick={()=>nav('/launch')}>Feed Launch</li>  
-              <li onClick={()=>setCalcRandom(true)}>Feed Random</li>  
-              <li onClick={()=>nav('/profile')}>Feed Me</li>  
-              <li onClick={()=>nav('/feeds')}>Feed Them</li>  
+              <li onClick={pleaseLogin(()=>nav('/launch'))}>Feed Launch</li>  
+              <li onClick={pleaseLogin(()=>setCalcRandom(true))}>Feed Random</li>  
+              <li onClick={pleaseLogin(()=>nav('/profile'))}>Feed Me</li>  
+              <li onClick={pleaseLogin(()=>nav('/feeds'))}>Feed Them</li>  
             </ul> 
             </MenuContainer>
           <LoginContainer><MenuLink onClick={loggedIn ? async ()=>onClickLogout() : async ()=>onClickLogin()}>{loggedIn ? "Logout": "Login"}</MenuLink></LoginContainer>

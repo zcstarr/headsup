@@ -103,6 +103,22 @@ export default () => {
   const [feeds, setFeeds] = useState<string[]>([]);
   const [featuredCards, setFeaturedCards] = useState<CardProps[]>([]);
 
+  function pleaseLogin(navFunc: ()=>void){
+    return () => {
+      if (!primaryAccount) {
+        dispatch({
+          type: storage.ActionType.SHOW_MSG_BOX,
+          payload: {
+            show: true,
+            message: "Please login with your lukso up to get started",
+          },
+        });
+        return;
+      }
+      return navFunc();
+    };
+  }
+
 
 
   const getMetadata = async (feed: string) => {
@@ -124,13 +140,14 @@ export default () => {
         "0x7a5ACcd1356E35BC870C106175Dc69624B63c615",
         "0x2E33f11de291d64FF1b6764D32cC4C4f40f8beb9",
       ]);
+    
+      pleaseLogin(()=>{})()
       setFeaturedCards(ff)
     }
     updateCards()
   }, [primaryAccount])
 
   const getFeaturedCards = async (feedAddrs: string[])=> {
-    console.log('yesss')
     const featuredNames = await Promise.allSettled(feedAddrs.map((feedAddr)=>getTokenName(feedAddr)));
     const featureds = await Promise.allSettled(feedAddrs.map((feedAddr)=>getTokenIdMetadata(feedAddr)));
     const fcards: CardProps[] = []
