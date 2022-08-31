@@ -9,11 +9,9 @@
   - [Architecture](#architecture)
     - [Overall Architecture](#feedhead-architecture)
     - [Contract Architecture](#contract-architecture)
-    - [Projects](#projects)
-    - [Contributions](#contributions)
-  - [Schedule](#schedule)
   - [Getting Started](#getting-started)
-  - [Discord](https://discord.gg/BSrZUxUuXq)
+  - [Deployment](#deployment)
+  - [Contract Addresses](#contract)
 
 ## What the $F@# is Feedhead?
 
@@ -60,8 +58,17 @@ REACT_APP_HEADSUP_ENV=testnet yarn run start
 ```
 Open up the website http://locahost:9011 enjoy!
 
+### Deploying your own contract
+```sh
+#LUKSO_DEPLOY_KEY is the env you need to set to deploy a contract
+yarn run compile
+LUKSO_DEPLOY_KEY=yourprivatekey npm run deploy-testnet
+#^^ outputs the contract address for your contract id
+# POINT server to your own contract via 
+REACT_APP_HEADSUP_MAIN_CONTRACT_ID=yourfactory_contract_address REACT_APP_HEADSUP_ENV=testnet yarn run start
+```
 
-### Launching your own local server in another terminal start the server on 8081
+#### Launching your own local server in another terminal start the server on 8081
 ```sh
 git clone git@github.com:zcstarr/headsup-server.git
 cd headsup-server
@@ -72,7 +79,16 @@ PINATA_API_KEY=yourkey PINATA_SECRET=yoursecret npm run start
 ```
 
 ### Deployment 
-Deployment uses CI with circle ci and is currently deployed via cloudformation configuration and elasticbeanstalk. The server is deployed that way as well.
+Deployment uses CI with circle ci and is currently deployed via cloudformation configuration and elasticbeanstalk. The server is deployed that way as well. It uses the script
+```
+LUKSO_DEPLOY_KEY = npm run deploy-testnet
+```
+### Contract Info
+- Current dev factory: `0x1B84491eA5d0AdC06904a3ba0bd098274cd16126`
+- Current prod factory: `0x82472A22F8896D0f684C9d847f19B68A22F3C180`
  
- ### Deeper Dive
+ ### Deeper PHilosophical Dive
  See [Future](./FUTURE.md)
+
+### Team
+Zane Starr - zane[at]gmail.com
